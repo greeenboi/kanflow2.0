@@ -1,7 +1,6 @@
+'use client';
 
-"use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export const useContainerSize = (ref: React.RefObject<HTMLElement>) => {
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -11,7 +10,7 @@ export const useContainerSize = (ref: React.RefObject<HTMLElement>) => {
       if (ref.current) {
         setSize({
           width: ref.current.offsetWidth,
-          height: ref.current.offsetHeight
+          height: ref.current.offsetHeight,
         });
       }
     };

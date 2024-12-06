@@ -1,18 +1,18 @@
-"use client";
-import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+'use client';
+import { cn } from '@/lib/utils';
+import { useEffect, useRef, useState } from 'react';
 
 export const BackgroundGradientAnimation = ({
-  gradientBackgroundStart = "rgb(108, 0, 162)",
-  gradientBackgroundEnd = "rgb(0, 17, 82)",
-  firstColor = "18, 113, 255",
-  secondColor = "221, 74, 255",
-  thirdColor = "100, 220, 255",
-  fourthColor = "200, 50, 50",
-  fifthColor = "180, 180, 50",
-  pointerColor = "140, 100, 255",
-  size = "80%",
-  blendingValue = "hard-light",
+  gradientBackgroundStart = 'rgb(108, 0, 162)',
+  gradientBackgroundEnd = 'rgb(0, 17, 82)',
+  firstColor = '18, 113, 255',
+  secondColor = '221, 74, 255',
+  thirdColor = '100, 220, 255',
+  fourthColor = '200, 50, 50',
+  fifthColor = '180, 180, 50',
+  pointerColor = '140, 100, 255',
+  size = '80%',
+  blendingValue = 'hard-light',
   children,
   className,
   interactive = true,
@@ -41,21 +41,21 @@ export const BackgroundGradientAnimation = ({
   const [tgY, setTgY] = useState(0);
   useEffect(() => {
     document.body.style.setProperty(
-      "--gradient-background-start",
+      '--gradient-background-start',
       gradientBackgroundStart
     );
     document.body.style.setProperty(
-      "--gradient-background-end",
+      '--gradient-background-end',
       gradientBackgroundEnd
     );
-    document.body.style.setProperty("--first-color", firstColor);
-    document.body.style.setProperty("--second-color", secondColor);
-    document.body.style.setProperty("--third-color", thirdColor);
-    document.body.style.setProperty("--fourth-color", fourthColor);
-    document.body.style.setProperty("--fifth-color", fifthColor);
-    document.body.style.setProperty("--pointer-color", pointerColor);
-    document.body.style.setProperty("--size", size);
-    document.body.style.setProperty("--blending-value", blendingValue);
+    document.body.style.setProperty('--first-color', firstColor);
+    document.body.style.setProperty('--second-color', secondColor);
+    document.body.style.setProperty('--third-color', thirdColor);
+    document.body.style.setProperty('--fourth-color', fourthColor);
+    document.body.style.setProperty('--fifth-color', fifthColor);
+    document.body.style.setProperty('--pointer-color', pointerColor);
+    document.body.style.setProperty('--size', size);
+    document.body.style.setProperty('--blending-value', blendingValue);
   }, []);
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export const BackgroundGradientAnimation = ({
   return (
     <div
       className={cn(
-        "h-screen w-screen relative overflow-hidden top-0 left-0 bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
+        'h-screen w-screen relative overflow-hidden top-0 left-0 bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]',
         containerClassName
       )}
     >
@@ -111,11 +111,11 @@ export const BackgroundGradientAnimation = ({
           </filter>
         </defs>
       </svg>
-      <div className={cn("", className)}>{children}</div>
+      <div className={cn('', className)}>{children}</div>
       <div
         className={cn(
-          "gradients-container h-full w-full blur-lg",
-          isSafari ? "blur-2xl" : "[filter:url(#blurMe)_blur(40px)]"
+          'gradients-container h-full w-full blur-lg',
+          isSafari ? 'blur-2xl' : '[filter:url(#blurMe)_blur(40px)]'
         )}
       >
         <div

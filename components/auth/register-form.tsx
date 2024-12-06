@@ -1,12 +1,12 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { Eye, EyeOff, Github, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
-import { Checkbox } from "@/components/ui/checkbox"
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Eye, EyeOff, Github, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -15,68 +15,68 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from "@/components/ui/form"
-import { useRouter } from "next/navigation"
+} from '@/components/ui/form';
+import { useRouter } from 'next/navigation';
 
 interface RegisterFormData {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  confirmPassword: string
-  acceptTerms: boolean
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  acceptTerms: boolean;
 }
 
 export function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm<RegisterFormData>({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
       acceptTerms: false,
     },
-  })
-  const { toast } = useToast()
-  const router = useRouter()
+  });
+  const { toast } = useToast();
+  const router = useRouter();
 
   const onSubmit = async (data: RegisterFormData) => {
     if (data.password !== data.confirmPassword) {
-      form.setError("confirmPassword", {
-        type: "manual",
-        message: "Passwords do not match",
-      })
-      return
+      form.setError('confirmPassword', {
+        type: 'manual',
+        message: 'Passwords do not match',
+      });
+      return;
     }
 
     try {
       // TODO: Implement actual registration
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 1000));
       toast({
-        title: "Success",
-        description: "Account created successfully! Please sign in.",
-      })
+        title: 'Success',
+        description: 'Account created successfully! Please sign in.',
+      });
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-      })
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong. Please try again.',
+      });
     }
-  }
+  };
 
   const handleGuestLogin = () => {
     toast({
-      title: "Welcome",
-      description: "Continuing as guest user",
-    })
+      title: 'Welcome',
+      description: 'Continuing as guest user',
+    });
     setTimeout(() => {
-      router.push("/dashboard")
-    }, 1000)
-  }
+      router.push('/dashboard');
+    }, 1000);
+  };
 
   return (
     <Form {...form}>
@@ -85,7 +85,7 @@ export function RegisterForm() {
           <FormField
             control={form.control}
             name="firstName"
-            rules={{ required: "First name is required" }}
+            rules={{ required: 'First name is required' }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>First Name</FormLabel>
@@ -100,7 +100,7 @@ export function RegisterForm() {
           <FormField
             control={form.control}
             name="lastName"
-            rules={{ required: "Last name is required" }}
+            rules={{ required: 'Last name is required' }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
@@ -117,10 +117,10 @@ export function RegisterForm() {
           control={form.control}
           name="email"
           rules={{
-            required: "Email is required",
+            required: 'Email is required',
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
+              message: 'Invalid email address',
             },
           }}
           render={({ field }) => (
@@ -140,7 +140,7 @@ export function RegisterForm() {
         <FormField
           control={form.control}
           name="acceptTerms"
-          rules={{ required: "You must accept the terms and conditions" }}
+          rules={{ required: 'You must accept the terms and conditions' }}
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0">
               <FormControl>
@@ -150,11 +150,10 @@ export function RegisterForm() {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>
-                  I accept the terms and conditions
-                </FormLabel>
+                <FormLabel>I accept the terms and conditions</FormLabel>
                 <FormDescription>
-                  By creating an account, you agree to our Terms of Service and Privacy Policy.
+                  By creating an account, you agree to our Terms of Service and
+                  Privacy Policy.
                 </FormDescription>
               </div>
               <FormMessage />
@@ -167,7 +166,9 @@ export function RegisterForm() {
             {form.formState.isSubmitting && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {form.formState.isSubmitting ? "Creating account..." : "Create account"}
+            {form.formState.isSubmitting
+              ? 'Creating account...'
+              : 'Create account'}
           </Button>
 
           <div className="relative">
@@ -181,9 +182,9 @@ export function RegisterForm() {
             </div>
           </div>
 
-          <Button 
-            variant="outline" 
-            className="w-full" 
+          <Button
+            variant="outline"
+            className="w-full"
             type="button"
             onClick={handleGuestLogin}
           >
@@ -192,5 +193,5 @@ export function RegisterForm() {
         </div>
       </form>
     </Form>
-  )
+  );
 }

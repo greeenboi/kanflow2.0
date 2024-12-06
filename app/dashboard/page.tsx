@@ -1,9 +1,15 @@
-import { DashboardHeader } from "@/components/dashboard/header"
-import { DashboardShell } from "@/components/dashboard/shell"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
-import { PlusCircle } from "lucide-react"
+import { DashboardHeader } from '@/components/dashboard/header';
+import { DashboardShell } from '@/components/dashboard/shell';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import Link from 'next/link';
+import { PlusCircle } from 'lucide-react';
 
 export default function DashboardPage() {
   return (
@@ -49,5 +55,5 @@ export default function DashboardPage() {
         </Card>
       </div>
     </DashboardShell>
-  )
+  );
 }

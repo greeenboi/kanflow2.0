@@ -1,8 +1,8 @@
-import { ThemeToggle } from "@/components/theme/theme-toggle"
-import { Sidebar } from "@/components/dashboard/sidebar"
+import { ThemeToggle } from '@/components/theme/theme-toggle';
+import { Sidebar } from '@/components/dashboard/sidebar';
 
 interface DashboardShellProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function DashboardShell({ children }: DashboardShellProps) {
@@ -21,5 +21,5 @@ export function DashboardShell({ children }: DashboardShellProps) {
         </main>
       </div>
     </div>
-  )
+  );
 }

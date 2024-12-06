@@ -1,16 +1,16 @@
-"use client"
+'use client';
 
-import { useSortable } from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
-import { Card } from "@/components/ui/card"
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Card } from '@/components/ui/card';
 
 interface KanbanCardProps {
   task: {
-    id: string
-    title: string
-    description: string
-  }
-  onClick: () => void
+    id: string;
+    title: string;
+    description: string;
+  };
+  onClick: () => void;
 }
 
 export function KanbanCard({ task, onClick }: KanbanCardProps) {
@@ -21,13 +21,13 @@ export function KanbanCard({ task, onClick }: KanbanCardProps) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: task.id })
+  } = useSortable({ id: task.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-  }
+  };
 
   return (
     <Card
@@ -41,5 +41,5 @@ export function KanbanCard({ task, onClick }: KanbanCardProps) {
       <h4 className="font-medium">{task.title}</h4>
       <p className="text-sm text-muted-foreground">{task.description}</p>
     </Card>
-  )
+  );
 }

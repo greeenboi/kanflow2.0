@@ -1,12 +1,12 @@
-import { Card } from "@/components/ui/card"
+import { Card } from '@/components/ui/card';
 
 interface KanbanColumnProps {
   column: {
-    id: string
-    title: string
-    taskIds: string[]
-  }
-  children: React.ReactNode
+    id: string;
+    title: string;
+    taskIds: string[];
+  };
+  children: React.ReactNode;
 }
 
 export function KanbanColumn({ column, children }: KanbanColumnProps) {
@@ -17,5 +17,5 @@ export function KanbanColumn({ column, children }: KanbanColumnProps) {
         {children}
       </Card>
     </div>
-  )
+  );
 }

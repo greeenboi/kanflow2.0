@@ -1,10 +1,10 @@
-import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Layout } from "lucide-react";
-import Link from "next/link";
+import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Layout } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Page() {
-  return(
+  return (
     <BackgroundGradientAnimation>
       <section className="absolute z-50 inset-0 pointer-events-none w-full h-full flex justify-center items-center">
         <div className="relative z-10 text-center">
@@ -21,7 +21,8 @@ export default function Page() {
             Welcome to KanbanFlow
           </h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto animate-fade-in-up animation-delay-150">
-            Visualize your workflow, optimize your processes, and skyrocket your productivity with our intuitive Kanban board solution.
+            Visualize your workflow, optimize your processes, and skyrocket your
+            productivity with our intuitive Kanban board solution.
           </p>
           <div className="flex justify-center space-x-4 animate-fade-in-up animation-delay-300 pointer-events-auto">
             <Button asChild size="lg" className="">
@@ -29,12 +30,17 @@ export default function Page() {
                 Get Started <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="text-white border-white hover:bg-white hover:text-gray-900"
+            >
               <Link href="/auth">Learn More</Link>
             </Button>
           </div>
-        </div>      
+        </div>
       </section>
     </BackgroundGradientAnimation>
-  )
+  );
 }
