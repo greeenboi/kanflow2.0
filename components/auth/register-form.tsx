@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Eye, EyeOff, Github, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -183,7 +183,7 @@ export function RegisterForm() {
           </div>
 
           <Button
-            variant="outline"
+            variant="ghost"
             className="w-full"
             type="button"
             onClick={handleGuestLogin}

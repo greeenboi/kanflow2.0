@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useContainerSize } from '@/hooks/use-container-size';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,10 +17,18 @@ import { RegisterForm } from '@/components/auth/register-form';
 import FlickeringGrid from '@/components/ui/flickering-grid';
 import ShineBorder from '@/components/ui/shine-border';
 import { AnimatePresence, motion } from 'framer-motion';
+// import { globeConfig, sampleArcs } from '@/lib/globe';
+// import dynamic from "next/dynamic";
+
+// const World = dynamic(() => import("../../components/ui/globe").then((m) => m.World), {
+//   ssr: false,
+// });
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
+  const searchParams = useSearchParams();
+  const tab = searchParams.get('tab') === 'register' ? 'register' : 'login';
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -53,6 +62,9 @@ export default function Home() {
         />
       </div>
       <div className="relative min-h-screen w-full grid place-items-center md:grid-cols-2 md:gap-4 px-4">
+        {/* <div className='hidden md:flex flex-row md:col-start-1 w-full h-screen justify-center items-end '>
+          <World data={sampleArcs} globeConfig={globeConfig} />
+        </div> */}
         <div className="md:col-start-2">
           <ShineBorder
             className="w-full max-w-lg mx-auto bg-card"
@@ -69,7 +81,7 @@ export default function Home() {
               </CardHeader>
               <CardContent className="mx-auto">
                 <Tabs
-                  defaultValue="login"
+                  defaultValue={tab}
                   className="w-full max-w-lg mx-auto overflow-hidden px-0.5"
                 >
                   <TabsList className="grid w-full grid-cols-2">
@@ -79,7 +91,8 @@ export default function Home() {
                   <AnimatePresence mode="wait" initial={false}>
                     <TabsContent
                       value="login"
-                      className="mt-6 h-[400px] w-[435px]"
+                      className="mt-6 h-[420px] w-[435px]"
+                      key={tab}
                     >
                       <motion.div
                         variants={slideVariants}
@@ -97,7 +110,8 @@ export default function Home() {
                     </TabsContent>
                     <TabsContent
                       value="register"
-                      className="mt-6 h-[400px] w-[435px]"
+                      className="mt-6 h-[420px] w-[435px]"
+                      key={tab}
                     >
                       <motion.div
                         variants={slideVariants}

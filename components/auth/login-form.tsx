@@ -6,7 +6,6 @@ import { Eye, EyeOff, Github, Loader2, VenetianMask } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -170,7 +169,7 @@ export function LoginForm() {
 
           <CoolMode>
             <Button
-              variant="outline"
+              variant="ghost"
               className="w-full"
               type="button"
               onClick={handleGuestLogin}

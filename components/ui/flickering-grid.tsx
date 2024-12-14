@@ -33,7 +33,7 @@ const FlickeringGrid: React.FC<FlickeringGridProps> = ({
   const memoizedColor = useMemo(() => {
     const toRGBA = (color: string) => {
       if (typeof window === 'undefined') {
-        return `rgba(0, 0, 0,`;
+        return 'rgba(0, 0, 0,';
       }
       const canvas = document.createElement('canvas');
       canvas.width = canvas.height = 1;
