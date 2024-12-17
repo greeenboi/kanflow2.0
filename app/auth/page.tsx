@@ -3,7 +3,6 @@
 import { useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useContainerSize } from '@/hooks/use-container-size';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -64,7 +63,7 @@ export default function Home() {
       <div className="relative min-h-screen w-full grid place-items-center md:grid-cols-2 md:gap-4 px-4">
         {/* <div className='hidden md:flex flex-row md:col-start-1 w-full h-screen justify-center items-end '>
           <World data={sampleArcs} globeConfig={globeConfig} />
-        </div> */}
+        </div>  */}
         <div className="md:col-start-2">
           <ShineBorder
             className="w-full max-w-lg mx-auto bg-card"
@@ -88,10 +87,10 @@ export default function Home() {
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="register">Register</TabsTrigger>
                   </TabsList>
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence mode="sync" initial={false}>
                     <TabsContent
                       value="login"
-                      className="mt-6 h-[420px] w-[435px]"
+                      className="mt-6 h-[480px] w-[435px]"
                       key={tab}
                     >
                       <motion.div
@@ -110,21 +109,21 @@ export default function Home() {
                     </TabsContent>
                     <TabsContent
                       value="register"
-                      className="mt-6 h-[420px] w-[435px]"
+                      className="mt-6 h-[480px] w-[435px] mx-2 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-track]:bg-transparent"
                       key={tab}
                     >
                       <motion.div
-                        variants={slideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{
-                          x: { type: 'spring', stiffness: 300, damping: 30 },
-                          opacity: { duration: 0.2 },
-                        }}
-                        custom={1}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{
+                        x: { type: 'spring', stiffness: 300, damping: 30 },
+                        opacity: { duration: 0.2 },
+                      }}
+                      custom={1}
                       >
-                        <RegisterForm />
+                      <RegisterForm />
                       </motion.div>
                     </TabsContent>
                   </AnimatePresence>

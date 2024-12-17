@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
@@ -17,6 +17,8 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
+import { registerUser } from '@/actions/auth/register';
+import type { RegistrationData } from '@/lib/types/zod/user';
 
 interface RegisterFormData {
   firstName: string;
@@ -40,37 +42,26 @@ export function RegisterForm() {
       acceptTerms: false,
     },
   });
-  const { toast } = useToast();
   const router = useRouter();
 
   const onSubmit = async (data: RegisterFormData) => {
-    if (data.password !== data.confirmPassword) {
-      form.setError('confirmPassword', {
-        type: 'manual',
-        message: 'Passwords do not match',
-      });
-      return;
-    }
-
     try {
-      // TODO: Implement actual registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast({
-        title: 'Success',
-        description: 'Account created successfully! Please sign in.',
-      });
+      await registerUser({
+        username: data.email,
+        password: data.password,
+        name: `${data.firstName} ${data.lastName}`,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+      })
+      router.push('/login');
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-      });
+      // Error notifications are handled within the action
     }
   };
 
   const handleGuestLogin = () => {
-    toast({
-      title: 'Welcome',
+    toast('Welcome',{
       description: 'Continuing as guest user',
     });
     setTimeout(() => {
@@ -134,8 +125,77 @@ export function RegisterForm() {
           )}
         />
 
-        {/* Password fields similar to login form but with confirm password */}
-        {/* ...existing password fields code... */}
+        <FormField
+          control={form.control}
+          name="password"
+          rules={{ required: 'Password is required' }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    {...field}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          rules={{
+            required: 'Confirm password is required',
+            validate: (value) =>
+              value === form.watch('password') || 'Passwords do not match',
+          }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="Confirm your password"
+                    {...field}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

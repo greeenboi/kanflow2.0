@@ -1,19 +1,39 @@
 import { drizzle } from 'drizzle-orm/pglite';
 import { join } from '@tauri-apps/api/path';
-import getAppDataDir from '@/hooks/get-appdata-directory';
+import { appDataDir, resolve } from '@tauri-apps/api/path';
+import { mkdir, exists } from '@tauri-apps/plugin-fs';
 
-// async function initializeDb() {
-// 	const dbDir = await join(await getAppDataDir(), 'db');
-// 	return drizzle({ connection: { dataDir: dbDir }});
-// }
+async function initializeDb() {
+    const appData = await appDataDir();
+    const dbPath = await join(appData, 'database');
+    
+    // Ensure database directory exists
+    const dirExists = await exists(dbPath);
+    if (!dirExists) {
+        await mkdir(dbPath, { recursive: true });
+    }
 
-// let db: Awaited<ReturnType<typeof initializeDb>>;
+    return drizzle({
+        connection: {
+            dataDir: dbPath
+        },
+        logger: true
+    });
+}
 
-// export default async function getDb() {
-// 	if (!db) {
-// 		db = await initializeDb();
-// 	}
-// 	return db;
-// }
+let dbInstance: ReturnType<typeof drizzle>;
 
-const db = drizzle({ connection: { dataDir: './Database/' }});
+export async function getDb() {
+    if (!dbInstance) {
+        dbInstance = await initializeDb();
+    }
+    return dbInstance;
+}
+
+// Temporary export for compatibility - replace usages gradually
+export const db = drizzle({
+    connection: {
+        dataDir: './database'
+    },
+    logger: true
+});

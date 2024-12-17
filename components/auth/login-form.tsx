@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Eye, EyeOff, Github, Loader2, VenetianMask } from 'lucide-react';
+import { Eye, EyeOff, Loader2, VenetianMask } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
@@ -17,6 +16,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { CoolMode } from '../ui/cool-mode';
+import { loginUser } from '@/actions/auth/login';
+import { toast } from 'sonner';
 
 type LoginFormData = {
   email: string;
@@ -35,35 +36,21 @@ export function LoginForm() {
     },
   });
   const router = useRouter();
-  const { toast } = useToast();
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      // TODO: Implement actual authentication
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast({
-        title: 'Success',
-        description: 'Logged in successfully!',
-      });
+      await loginUser(data);
       router.push('/dashboard');
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Invalid credentials. Please try again.',
-      });
+      // Error notifications are handled within the action
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGuestLogin = () => {
-    setIsLoading(true);
-    toast({
-      title: 'Welcome',
-      description: 'Continuing as guest user',
-    });
+    toast('Continuing as guest user.');
     setTimeout(() => {
       router.push('/dashboard');
     }, 1000);
