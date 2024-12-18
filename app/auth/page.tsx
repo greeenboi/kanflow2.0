@@ -27,7 +27,7 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
   const searchParams = useSearchParams();
-  const tab = searchParams.get('tab') === 'register' ? 'register' : 'login';
+  const tab = searchParams?.get('tab') === 'register' ? 'register' : 'login';
 
   const slideVariants = {
     enter: (direction: number) => ({

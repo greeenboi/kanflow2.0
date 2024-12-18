@@ -24,5 +24,12 @@ log = "0.4"
 tauri = { version = "2.1.0", features = [] }
 tauri-plugin-log = "2"
 tauri-plugin-fs = "2"
+tauri-plugin-localhost = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-deep-link = "2"
+webbrowser = "1.0.3"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
 
 

@@ -17,8 +17,8 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
-import { registerUser } from '@/actions/auth/register';
-import type { RegistrationData } from '@/lib/types/zod/user';
+// import { registerUser } from '@/actions/auth/register';
+// import type { RegistrationData } from '@/lib/types/zod/user';
 
 interface RegisterFormData {
   firstName: string;
@@ -46,14 +46,14 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      await registerUser({
-        username: data.email,
-        password: data.password,
-        name: `${data.firstName} ${data.lastName}`,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-      })
+      // await registerUser({
+      //   username: data.email,
+      //   password: data.password,
+      //   name: `${data.firstName} ${data.lastName}`,
+      //   firstName: data.firstName,
+      //   lastName: data.lastName,
+      //   email: data.email,
+      // })
       router.push('/login');
     } catch (error) {
       // Error notifications are handled within the action

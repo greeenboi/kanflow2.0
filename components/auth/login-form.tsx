@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, Loader2, VenetianMask } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -16,8 +16,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { CoolMode } from '../ui/cool-mode';
-import { loginUser } from '@/actions/auth/login';
+import { invoke } from '@tauri-apps/api/core';
+// import { listen } from "@tauri-apps/api/event";
+// import { Command } from "@tauri-apps/api/";
+import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
 import { toast } from 'sonner';
+import { supabase } from '@/utils/supabase/client';
 
 type LoginFormData = {
   email: string;
@@ -25,6 +29,16 @@ type LoginFormData = {
   rememberMe: boolean;
 };
 
+
+const openInBrowser = async (url: string) => {
+  try {
+    console.log('Opening URL:', url);
+    const result = invoke('open_link_on_click', { url: url });
+    console.log('Result:', result);
+  } catch (error) {
+    console.error('Failed to open URL:', error);
+  }
+};
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,10 +51,52 @@ export function LoginForm() {
   });
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
+  const [port, setPort] = useState<number | null>(null);
+
+  
+
+  const handleLogin = async (data: LoginFormData) => {
+    setLoading(true);
+
+    const { data: userdata, error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Logged in successfully');
+
+      console.log('User data:', userdata);
+    }
+    setLoading(false);
+  };
+
+  const onProviderLogin = (provider: "google" | "github") => async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      options: {
+        skipBrowserRedirect: true,
+        scopes: provider === "google" ? "profile email" : "",
+        redirectTo: "kanflow://",
+      },
+      provider: provider,
+    });
+
+    if (data.url) {
+      openInBrowser(data.url);
+    } else {
+      alert(error?.message);
+    }
+  };
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      await loginUser(data);
+      await handleLogin(data);
       router.push('/dashboard');
     } catch (error) {
       // Error notifications are handled within the action
