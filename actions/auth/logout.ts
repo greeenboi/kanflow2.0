@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-export const logoutUser = async () => {
+const logoutUser = async () => {
     try {
         // TODO: Implement session destruction, e.g., clearing cookies or tokens
         toast('Logged out successfully.');
@@ -9,3 +9,4 @@ export const logoutUser = async () => {
         throw new Error('Logout failed');
     }
 };
+export default logoutUser;

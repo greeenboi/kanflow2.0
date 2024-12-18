@@ -10,6 +10,9 @@
     "log:default",
     "fs:default",
     "shell:default",
-    "deep-link:default"
+    "deep-link:default",
+    "sql:default",
+    "sql:allow-execute",
+    "store:default"
   ]
 }

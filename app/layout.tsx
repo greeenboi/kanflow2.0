@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/theme/theme-provider';
+import UserProvider from '@/context/UserContext';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -51,8 +52,10 @@ export default function RootLayout({
             'tealdark',
           ]}
         >
-          {children}
-          <Toaster richColors position='top-right' />
+          <UserProvider>
+            {children}
+            <Toaster richColors position='top-right' />
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>

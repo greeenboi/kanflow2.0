@@ -16,12 +16,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { CoolMode } from '../ui/cool-mode';
-import { invoke } from '@tauri-apps/api/core';
-// import { listen } from "@tauri-apps/api/event";
-// import { Command } from "@tauri-apps/api/";
-import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
 import { toast } from 'sonner';
-import { supabase } from '@/utils/supabase/client';
+import loginUser from '@/actions/auth/login';
+import guestLogin from '@/actions/auth/guestLogin';
 
 type LoginFormData = {
   email: string;
@@ -29,17 +26,7 @@ type LoginFormData = {
   rememberMe: boolean;
 };
 
-
-const openInBrowser = async (url: string) => {
-  try {
-    console.log('Opening URL:', url);
-    const result = invoke('open_link_on_click', { url: url });
-    console.log('Result:', result);
-  } catch (error) {
-    console.error('Failed to open URL:', error);
-  }
-};
-export function LoginForm() {
+export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<LoginFormData>({
@@ -52,64 +39,37 @@ export function LoginForm() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [port, setPort] = useState<number | null>(null);
-
-  
 
   const handleLogin = async (data: LoginFormData) => {
     setLoading(true);
-
-    const { data: userdata, error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
-
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success('Logged in successfully');
-
-      console.log('User data:', userdata);
-    }
-    setLoading(false);
-  };
-
-  const onProviderLogin = (provider: "google" | "github") => async () => {
-    setLoading(true);
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      options: {
-        skipBrowserRedirect: true,
-        scopes: provider === "google" ? "profile email" : "",
-        redirectTo: "kanflow://",
-      },
-      provider: provider,
-    });
-
-    if (data.url) {
-      openInBrowser(data.url);
-    } else {
-      alert(error?.message);
+    try {
+      await loginUser({
+        email: data.email,
+        password: data.password,
+        rememberMe: data.rememberMe,
+      });
+      router.push('/dashboard');
+    } catch (error) {
+      // Errors are already handled in loginUser
+    } finally {
+      setLoading(false);
     }
   };
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    try {
-      await handleLogin(data);
-      router.push('/dashboard');
-    } catch (error) {
-      // Error notifications are handled within the action
-    } finally {
-      setIsLoading(false);
-    }
+    await handleLogin(data);
   };
 
-  const handleGuestLogin = () => {
-    toast('Continuing as guest user.');
-    setTimeout(() => {
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      await guestLogin();
       router.push('/dashboard');
-    }, 1000);
+    } catch (error) {
+      // Handle error if necessary
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

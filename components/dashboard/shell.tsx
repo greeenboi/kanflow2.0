@@ -1,3 +1,5 @@
+'use client';
+import { useUser } from "@/context/UserContext";
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Sidebar } from '@/components/dashboard/sidebar';
 
@@ -6,13 +8,14 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children }: DashboardShellProps) {
+  const { user } = useUser();
   return (
     <div className="flex min-h-screen">
       <Sidebar />
       <div className="flex-1 ml-64">
         <header className="sticky top-0 z-40 border-b bg-background">
           <div className="container flex h-16 items-center justify-between py-4 px-4">
-            <h2 className="text-lg font-bold">Kanban</h2>
+            <h2 className="text-lg font-bold">{user && <p className="text-md">Welcome, {user.name}!</p>}</h2>
             <ThemeToggle />
           </div>
         </header>

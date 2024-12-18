@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useContainerSize } from '@/hooks/use-container-size';
 import {
@@ -11,17 +11,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LoginForm } from '@/components/auth/login-form';
-import { RegisterForm } from '@/components/auth/register-form';
+
 import FlickeringGrid from '@/components/ui/flickering-grid';
 import ShineBorder from '@/components/ui/shine-border';
 import { AnimatePresence, motion } from 'framer-motion';
-// import { globeConfig, sampleArcs } from '@/lib/globe';
-// import dynamic from "next/dynamic";
-
-// const World = dynamic(() => import("../../components/ui/globe").then((m) => m.World), {
-//   ssr: false,
-// });
+import { RefreshCcw } from 'lucide-react';
+import LoginForm from '@/components/auth/login-form';
+import RegisterForm from '@/components/auth/register-form';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -61,9 +57,6 @@ export default function Home() {
         />
       </div>
       <div className="relative min-h-screen w-full grid place-items-center md:grid-cols-2 md:gap-4 px-4">
-        {/* <div className='hidden md:flex flex-row md:col-start-1 w-full h-screen justify-center items-end '>
-          <World data={sampleArcs} globeConfig={globeConfig} />
-        </div>  */}
         <div className="md:col-start-2">
           <ShineBorder
             className="w-full max-w-lg mx-auto bg-card"
@@ -87,13 +80,33 @@ export default function Home() {
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="register">Register</TabsTrigger>
                   </TabsList>
-                  <AnimatePresence mode="sync" initial={false}>
-                    <TabsContent
-                      value="login"
-                      className="mt-6 h-[480px] w-[435px]"
-                      key={tab}
-                    >
-                      <motion.div
+                  <Suspense fallback={<RefreshCcw className="mx-auto animate-spin" />}>
+                    <AnimatePresence mode="wait" initial={false}>
+                      <TabsContent
+                        value="login"
+                        className="mt-6 h-[480px] w-[435px]"
+                        key={tab}
+                      >
+                        <motion.div
+                          variants={slideVariants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{
+                            x: { type: 'spring', stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 },
+                          }}
+                          custom={-1}
+                        >
+                          <LoginForm />
+                        </motion.div>
+                      </TabsContent>
+                      <TabsContent
+                        value="register"
+                        className="mt-6 h-[480px] w-[435px] mx-2 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-track]:bg-transparent"
+                        key={tab}
+                      >
+                        <motion.div
                         variants={slideVariants}
                         initial="enter"
                         animate="center"
@@ -102,31 +115,13 @@ export default function Home() {
                           x: { type: 'spring', stiffness: 300, damping: 30 },
                           opacity: { duration: 0.2 },
                         }}
-                        custom={-1}
-                      >
-                        <LoginForm />
-                      </motion.div>
-                    </TabsContent>
-                    <TabsContent
-                      value="register"
-                      className="mt-6 h-[480px] w-[435px] mx-2 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-track]:bg-transparent"
-                      key={tab}
-                    >
-                      <motion.div
-                      variants={slideVariants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{
-                        x: { type: 'spring', stiffness: 300, damping: 30 },
-                        opacity: { duration: 0.2 },
-                      }}
-                      custom={1}
-                      >
-                      <RegisterForm />
-                      </motion.div>
-                    </TabsContent>
-                  </AnimatePresence>
+                        custom={1}
+                        >
+                        <RegisterForm />
+                        </motion.div>
+                      </TabsContent>
+                    </AnimatePresence>
+                  </Suspense>
                 </Tabs>
               </CardContent>
             </Card>

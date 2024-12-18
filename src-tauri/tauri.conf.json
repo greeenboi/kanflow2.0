@@ -28,6 +28,9 @@
       "desktop": {
         "schemes": ["kanflow","oauth://"]
       }
+    },
+    "sql": {
+      "preload": ["sqlite:kanflow.db"]
     }
   },
   "bundle": {

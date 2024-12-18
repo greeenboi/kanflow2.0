@@ -1,5 +1,5 @@
 
-import { logoutUser } from '@/actions/auth/logout';
+import logoutUser from '@/actions/auth/logout';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';

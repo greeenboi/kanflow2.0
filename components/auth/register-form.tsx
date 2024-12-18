@@ -17,8 +17,8 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
-// import { registerUser } from '@/actions/auth/register';
-// import type { RegistrationData } from '@/lib/types/zod/user';
+import registerUser from '@/actions/auth/register';
+import guestLogin from '@/actions/auth/guestLogin';
 
 interface RegisterFormData {
   firstName: string;
@@ -29,7 +29,7 @@ interface RegisterFormData {
   acceptTerms: boolean;
 }
 
-export function RegisterForm() {
+export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm<RegisterFormData>({
@@ -46,27 +46,25 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      // await registerUser({
-      //   username: data.email,
-      //   password: data.password,
-      //   name: `${data.firstName} ${data.lastName}`,
-      //   firstName: data.firstName,
-      //   lastName: data.lastName,
-      //   email: data.email,
-      // })
-      router.push('/login');
+      await registerUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+      });
+      router.push('/dashboard');
     } catch (error) {
-      // Error notifications are handled within the action
+      // Errors are already handled in registerUser
     }
   };
 
-  const handleGuestLogin = () => {
-    toast('Welcome',{
-      description: 'Continuing as guest user',
-    });
-    setTimeout(() => {
+  const handleGuestLogin = async () => {
+    try {
+      await guestLogin();
       router.push('/dashboard');
-    }, 1000);
+    } catch (error) {
+      // Handle error if necessary
+    }
   };
 
   return (
