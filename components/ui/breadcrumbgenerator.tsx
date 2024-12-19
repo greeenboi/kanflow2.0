@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { useMediaQuery } from "@/hooks/use-media-query"
@@ -14,23 +13,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Slash } from "lucide-react"
 
 const formatLabel = (segment: string): string => {
@@ -69,9 +51,7 @@ export function BreadcrumbComponent() {
         </BreadcrumbItem>
         {items.slice(1).map((item, index) => (
           <React.Fragment key={index}>
-            <BreadcrumbSeparator>
-                <Slash />
-            </BreadcrumbSeparator>
+            <BreadcrumbSeparator/>
             <BreadcrumbItem>
               {item.href ? (
                 <BreadcrumbLink href={item.href}>
