@@ -1,11 +1,15 @@
 import type { Task } from '@/actions/dashboard/kanban/tasks';
 
-export type TaskFormData = {
+export interface TaskFormData {
   title: string;
   description?: string;
-  due_date?: string;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
-};
+  due_date?: Date;
+  estimated_time?: number;
+  markdown_content?: string;
+  time_to_complete?: string;
+  checklist?: Array<{ text: string; checked: boolean }>;
+}
 
 export type DragStartEvent = {
   active: { id: number };

@@ -222,7 +222,7 @@ export default function BoardPage() {
               description: taskData.description,
               column_id: columns.todo.id,
               priority: taskData.priority,
-              due_date: taskData.due_date
+              due_date: taskData.due_date?.toISOString(),
             });
             
             // Create a proper Task object
@@ -233,10 +233,14 @@ export default function BoardPage() {
               description: taskData.description,
               priority: taskData.priority || 'medium',
               status: 'todo',
-              due_date: taskData.due_date,
+              due_date: taskData.due_date?.toISOString(),
               created_at: new Date().toISOString(),
               last_updated: new Date().toISOString(),
               comments_enabled: true,
+              estimated_time: taskData.estimated_time,
+              markdown_content: taskData.markdown_content,
+              time_to_complete: taskData.time_to_complete,
+              checklist: JSON.stringify(taskData.checklist || []),
               order_num: 0,
               column_id: columns.todo.id
             };
