@@ -2,9 +2,9 @@ import { Card } from '@/components/ui/card';
 
 interface KanbanColumnProps {
   column: {
-    id: string;
+    id: number;
     title: string;
-    taskIds: string[];
+    taskIds: number[];
   };
   children: React.ReactNode;
 }

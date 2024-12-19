@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LayoutDashboard, KanbanSquare, User as UserIcon, Search } from 'lucide-react';
+import { LayoutDashboard, KanbanSquare, User as UserIcon, Search, Plus } from 'lucide-react';
 import { getUserBoards } from '@/actions/dashboard/kanban/boards';
 import type { Board } from '@/actions/dashboard/kanban/boards';
 import { useUser } from '@/context/UserContext';
@@ -13,6 +13,7 @@ import { SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, Sideb
 import { NavMain } from './nav-boards';
 import { Label } from '../ui/label';
 import { DatePicker } from './date-picker';
+import { CreateBoardDialog } from './create-board-dialog';
 
 const sidebarNavItems = [
   {
@@ -28,14 +29,15 @@ export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useUser();
 
-  useEffect(() => {
-    const fetchBoards = async () => {
-      const userId = user?.id || 1; // Replace with actual user ID
-      const userBoards = await getUserBoards(userId);
-      setBoards(userBoards);
-    };
-    fetchBoards();
+  const fetchBoards = useCallback(async () => {
+    const userId = user?.id || 1; // Replace with actual user ID
+    const userBoards = await getUserBoards(userId);
+    setBoards(userBoards);
   }, [user]);
+
+  useEffect(() => {
+    fetchBoards();
+  }, [fetchBoards]);
 
   const filteredBoards = boards.filter(board =>
     board.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -53,9 +55,13 @@ export function Sidebar() {
   };
 
   const handleCreateBoard = () => {
-    // You can implement the board creation logic here
-    // For example, show a modal or navigate to create board page
-    console.log('Create board clicked')
+    // This will now be handled by the dialog
+  }
+
+  const refreshBoards = () => {
+    // Refresh the boards list after creation
+    const userId = user?.id || 1
+    fetchBoards()
   }
 
   return (
@@ -83,7 +89,7 @@ export function Sidebar() {
             <nav className="flex flex-col gap-2">
               <NavMain 
                 items={[boardsNavItem]} 
-                onCreateBoard={handleCreateBoard}
+                refreshBoards={refreshBoards}
               />
             </nav>
           </SidebarGroup>

@@ -3,13 +3,10 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Card } from '@/components/ui/card';
+import type { Task } from '@/actions/dashboard/kanban/tasks';
 
 interface KanbanCardProps {
-  task: {
-    id: string;
-    title: string;
-    description: string;
-  };
+  task: Task;
   onClick: () => void;
 }
 

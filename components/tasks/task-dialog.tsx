@@ -1,77 +1,45 @@
 'use client';
 
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import type { Task } from '@/actions/dashboard/kanban/tasks';
+import type { TaskFormData } from '@/types/kanban';
 
 interface TaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  task?: {
-    id: string;
-    title: string;
-    description: string;
-  } | null;
-  onSave: (task: { title: string; description: string }) => void;
+  task: Task | null;
+  onSave: (data: TaskFormData) => Promise<void>;
 }
 
-export function TaskDialog({
-  open,
-  onOpenChange,
-  task,
-  onSave,
-}: TaskDialogProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-
-  useEffect(() => {
-    if (task) {
-      setTitle(task.title);
-      setDescription(task.description);
-    } else {
-      setTitle('');
-      setDescription('');
-    }
-  }, [task]);
+export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps) {
+  const { register, handleSubmit, reset } = useForm<TaskFormData>({
+    defaultValues: task ? {
+      title: task.title,
+      description: task.description,
+      due_date: task.due_date,
+      priority: task.priority
+    } : {
+      title: '',
+      description: '',
+      priority: 'medium'
+    },
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{task ? 'Edit Task' : 'Create Task'}</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button onClick={() => onSave({ title, description })}>
-            {task ? 'Save Changes' : 'Create Task'}
-          </Button>
-        </DialogFooter>
+        <form onSubmit={handleSubmit(onSave)} className="space-y-4">
+          <Input {...register('title')} placeholder="Task title" />
+          <Textarea {...register('description')} placeholder="Task description" />
+          <Button type="submit">{task ? 'Update' : 'Create'}</Button>
+        </form>
       </DialogContent>
     </Dialog>
   );

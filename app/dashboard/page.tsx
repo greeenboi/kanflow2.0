@@ -1,3 +1,4 @@
+
 import { DashboardHeader } from '@/components/dashboard/header';
 import { DashboardShell } from '@/components/dashboard/shell';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import Link from 'next/link';
 import { PlusCircle } from 'lucide-react';
+import { CreateBoardDialog } from '@/components/dashboard/create-board-dialog';
 
 export default function DashboardPage() {
 
@@ -18,14 +20,7 @@ export default function DashboardPage() {
       <DashboardHeader
         heading="Dashboard"
         text="Manage your tasks and projects"
-      >
-        <Link href="/dashboard/board">
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New Board
-          </Button>
-        </Link>
-      </DashboardHeader>
+      />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>

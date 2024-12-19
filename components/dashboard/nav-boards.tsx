@@ -18,10 +18,11 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
+import { CreateBoardDialog } from "./create-board-dialog"
 
 export function NavMain({
   items,
-  onCreateBoard,
+  refreshBoards,
 }: {
   items: {
     title: string
@@ -33,16 +34,18 @@ export function NavMain({
       url: string
     }[]
   }[]
-  onCreateBoard?: () => void
+  refreshBoards?: () => void
 }) {
   if (items[0]?.items?.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4 py-4">
         <p className="text-sm text-muted-foreground">No boards found</p>
-        <Button onClick={onCreateBoard} size="sm" className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Board
-        </Button>
+        <CreateBoardDialog onBoardCreated={refreshBoards}>
+          <SidebarMenuButton size="sm" className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create Board
+          </SidebarMenuButton>
+        </CreateBoardDialog>
       </div>
     )
   }
@@ -70,7 +73,7 @@ export function NavMain({
                 <SidebarMenuSubItem key={subItem.title}>
                     <SidebarMenuSubButton asChild>
                     <a href={subItem.url}>
-                        <span>{subItem.title}</span>
+                        <span className="">{subItem.title}</span>
                     </a>
                     </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
