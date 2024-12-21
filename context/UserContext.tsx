@@ -7,7 +7,7 @@ import type { User } from '@/lib/db/actions';
 import { RefreshCcw } from 'lucide-react';
 
 // Route configuration
-const PROTECTED_ROUTES = ['/dashboard', '/settings', '/profile'];
+const PROTECTED_ROUTES = ['/dashboard', '/dashboard/board'];
 const PUBLIC_ONLY_ROUTES = ['/auth', '/learnmore', '/'];
 
 interface UserContextProps {
@@ -24,6 +24,14 @@ export function useUser() {
     throw new Error('useUser must be used within a UserProvider');
   }
   return context;
+}
+
+export function useLogout() {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useLogout must be used within a UserProvider');
+  }
+  return context.logoutUser;
 }
 
 const UserProvider: React.FC<{ children: React.ReactNode }> = ({

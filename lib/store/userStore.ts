@@ -37,7 +37,6 @@ export const getUser = async (): Promise<User | null> => {
   return user || null;
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const updateUser = async (userData: User): Promise<void> => {
   console.log('userStore: updateUser called with data:', userData);
   const storeInstance = await initializeStore();
