@@ -12,7 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Home } from "lucide-react";
+import { Home } from 'lucide-react';
 
 const formatLabel = (segment: string): string => {
   return segment
@@ -20,7 +20,6 @@ const formatLabel = (segment: string): string => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 };
-
 
 export function BreadcrumbComponent() {
   const pathname = usePathname();

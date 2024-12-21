@@ -40,7 +40,11 @@ export function NavMain({
     return (
       <div className="flex flex-col items-center gap-4 py-4">
         <p className="text-sm text-muted-foreground">No boards found</p>
-        <CreateBoardDialog open={isCreateBoardDialogOpen} onOpenChange={setIsCreateBoardDialogOpen}  onBoardCreated={refreshBoards}>
+        <CreateBoardDialog
+          open={isCreateBoardDialogOpen}
+          onOpenChange={setIsCreateBoardDialogOpen}
+          onBoardCreated={refreshBoards}
+        >
           <SidebarMenuButton size="sm" className="gap-2">
             <Plus className="h-4 w-4" />
             Create Board

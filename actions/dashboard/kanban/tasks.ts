@@ -42,17 +42,17 @@ export interface CreateTaskData {
 }
 
 export interface TaskStats {
-    active_tasks: number;
-    completed_tasks: number;
-    total_boards: number;
+  active_tasks: number;
+  completed_tasks: number;
+  total_boards: number;
 }
-  
+
 export interface RecentTask {
-    id: number;
-    title: string;
-    board_id: number;
-    status: string;
-    created_at: string;
+  id: number;
+  title: string;
+  board_id: number;
+  status: string;
+  created_at: string;
 }
 
 export interface TasksByDate {
@@ -118,7 +118,6 @@ export async function updateTask(
   await db.execute(sql, values);
 }
 
-
 export async function moveTask(
   taskId: number,
   newColumnId: number,
@@ -143,10 +142,10 @@ export async function archiveTask(id: number): Promise<void> {
     "UPDATE tasks SET status = 'archived', last_updated = CURRENT_TIMESTAMP WHERE id = ?";
   await db.execute(sql, [id]);
 }
-  
+
 export async function getTaskStats(userId: number): Promise<TaskStats> {
   const db = await Database.load('sqlite:kanflow.db');
-  
+
   const stats = await db.select<TaskStats[]>(`
     SELECT 
       (SELECT COUNT(*) FROM tasks WHERE status = 'in_progress') as active_tasks,
@@ -157,26 +156,35 @@ export async function getTaskStats(userId: number): Promise<TaskStats> {
   return stats[0];
 }
 
-export async function getRecentTasks(userId: number, limit = 6): Promise<RecentTask[]> {
+export async function getRecentTasks(
+  userId: number,
+  limit = 6
+): Promise<RecentTask[]> {
   const db = await Database.load('sqlite:kanflow.db');
-  
-  return await db.select<RecentTask[]>(`
+
+  return await db.select<RecentTask[]>(
+    `
     SELECT id, title, status, created_at, board_id
     FROM tasks 
     WHERE status != 'archived'
     ORDER BY created_at DESC 
     LIMIT ?
-  `, [limit]);
+  `,
+    [limit]
+  );
 }
 
 export async function getTasksByDueDate(date: string): Promise<TasksByDate[]> {
   const db = await Database.load('sqlite:kanflow.db');
-  return await db.select<TasksByDate[]>(`
+  return await db.select<TasksByDate[]>(
+    `
     SELECT id, title, due_date, priority, board_id
     FROM tasks 
     WHERE date(due_date) = date(?)
     AND status != 'done' 
     AND status != 'archived'
     ORDER BY priority DESC
-  `, [date]);
+  `,
+    [date]
+  );
 }

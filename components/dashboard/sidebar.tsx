@@ -4,11 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  LayoutDashboard,
-  KanbanSquare,
-  Search,
-} from 'lucide-react';
+import { LayoutDashboard, KanbanSquare, Search } from 'lucide-react';
 import { getUserBoards } from '@/actions/dashboard/kanban/boards';
 import type { Board } from '@/actions/dashboard/kanban/boards';
 import { useUser } from '@/context/UserContext';
@@ -70,7 +66,6 @@ export function Sidebar() {
     })),
   };
 
-  
   const refreshBoards = () => {
     // Refresh the boards list after creation
     const userId = user?.id || 1;

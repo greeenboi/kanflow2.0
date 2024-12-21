@@ -17,7 +17,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
           <div className="container flex items-center justify-between py-4 px-4">
             {/* <h2 className="text-lg font-bold">{user && <p className="text-md">Welcome, {user.name}!</p>}</h2> */}
             <BreadcrumbComponent />
-            <span className='flex gap-2 items-center'>
+            <span className="flex gap-2 items-center">
               <KeyboardShortcuts />
               <ThemeToggle />
             </span>

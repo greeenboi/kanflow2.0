@@ -13,7 +13,12 @@ import { CreateBoardDialog } from '@/components/dashboard/create-board-dialog';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { RecentTasks } from '@/components/dashboard/recent-tasks';
-import { getRecentTasks, getTaskStats, type RecentTask, type TaskStats } from '@/actions/dashboard/kanban/tasks';
+import {
+  getRecentTasks,
+  getTaskStats,
+  type RecentTask,
+  type TaskStats,
+} from '@/actions/dashboard/kanban/tasks';
 import { useEffect, useState, useCallback } from 'react';
 
 export default function DashboardPage() {
@@ -21,10 +26,14 @@ export default function DashboardPage() {
   const [recentTasks, setRecentTasks] = useState<RecentTask[]>([]);
   const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState(false);
 
-  useHotkeys('ctrl+shift+n', (e) => {
-    e.preventDefault();
-    setIsCreateBoardDialogOpen(true);
-  }, []);
+  useHotkeys(
+    'ctrl+shift+n',
+    e => {
+      e.preventDefault();
+      setIsCreateBoardDialogOpen(true);
+    },
+    []
+  );
 
   const fetchData = useCallback(async () => {
     const stats = await getTaskStats(1);
@@ -34,8 +43,7 @@ export default function DashboardPage() {
   }, []);
   useEffect(() => {
     fetchData();
-  }
-  , [fetchData]);
+  }, [fetchData]);
 
   return (
     <>
@@ -44,7 +52,7 @@ export default function DashboardPage() {
         text="Manage your tasks and projects"
       >
         <div className="flex items-center gap-2">
-          <CreateBoardDialog 
+          <CreateBoardDialog
             open={isCreateBoardDialogOpen}
             onOpenChange={setIsCreateBoardDialogOpen}
             onBoardCreated={() => {
@@ -66,7 +74,9 @@ export default function DashboardPage() {
             <CardDescription>Tasks in progress</CardDescription>
           </CardHeader>
           <CardContent>
-            { stats && <div className="text-2xl font-bold">{stats.active_tasks}</div>}
+            {stats && (
+              <div className="text-2xl font-bold">{stats.active_tasks}</div>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -75,7 +85,9 @@ export default function DashboardPage() {
             <CardDescription>Successfully finished tasks</CardDescription>
           </CardHeader>
           <CardContent>
-            { stats && <div className="text-2xl font-bold">{stats.completed_tasks}</div>}
+            {stats && (
+              <div className="text-2xl font-bold">{stats.completed_tasks}</div>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -84,7 +96,9 @@ export default function DashboardPage() {
             <CardDescription>Active project boards</CardDescription>
           </CardHeader>
           <CardContent>
-            { stats && <div className="text-2xl font-bold">{stats.total_boards}</div>}
+            {stats && (
+              <div className="text-2xl font-bold">{stats.total_boards}</div>
+            )}
           </CardContent>
         </Card>
       </div>
