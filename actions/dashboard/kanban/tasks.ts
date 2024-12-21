@@ -55,6 +55,14 @@ export interface RecentTask {
     created_at: string;
 }
 
+export interface TasksByDate {
+  id: number;
+  title: string;
+  due_date: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  board_id: number;
+}
+
 export async function createTask(taskData: CreateTaskData): Promise<number> {
   const db = await Database.load('sqlite:kanflow.db');
   // Get the highest order_num for the column and add 1
@@ -136,27 +144,39 @@ export async function archiveTask(id: number): Promise<void> {
   await db.execute(sql, [id]);
 }
   
-  export async function getTaskStats(userId: number): Promise<TaskStats> {
-    const db = await Database.load('sqlite:kanflow.db');
-    
-    const stats = await db.select<TaskStats[]>(`
-      SELECT 
-        (SELECT COUNT(*) FROM tasks WHERE status = 'in_progress') as active_tasks,
-        (SELECT COUNT(*) FROM tasks WHERE status = 'done') as completed_tasks,
-        (SELECT COUNT(*) FROM boards WHERE is_archived = FALSE) as total_boards
-    `);
+export async function getTaskStats(userId: number): Promise<TaskStats> {
+  const db = await Database.load('sqlite:kanflow.db');
   
-    return stats[0];
-  }
+  const stats = await db.select<TaskStats[]>(`
+    SELECT 
+      (SELECT COUNT(*) FROM tasks WHERE status = 'in_progress') as active_tasks,
+      (SELECT COUNT(*) FROM tasks WHERE status = 'done') as completed_tasks,
+      (SELECT COUNT(*) FROM boards WHERE is_archived = FALSE) as total_boards
+  `);
+
+  return stats[0];
+}
+
+export async function getRecentTasks(userId: number, limit = 6): Promise<RecentTask[]> {
+  const db = await Database.load('sqlite:kanflow.db');
   
-  export async function getRecentTasks(userId: number, limit = 6): Promise<RecentTask[]> {
-    const db = await Database.load('sqlite:kanflow.db');
-    
-    return await db.select<RecentTask[]>(`
-      SELECT id, title, status, created_at, board_id
-      FROM tasks 
-      WHERE status != 'archived'
-      ORDER BY created_at DESC 
-      LIMIT ?
-    `, [limit]);
-  }
+  return await db.select<RecentTask[]>(`
+    SELECT id, title, status, created_at, board_id
+    FROM tasks 
+    WHERE status != 'archived'
+    ORDER BY created_at DESC 
+    LIMIT ?
+  `, [limit]);
+}
+
+export async function getTasksByDueDate(date: string): Promise<TasksByDate[]> {
+  const db = await Database.load('sqlite:kanflow.db');
+  return await db.select<TasksByDate[]>(`
+    SELECT id, title, due_date, priority, board_id
+    FROM tasks 
+    WHERE date(due_date) = date(?)
+    AND status != 'done' 
+    AND status != 'archived'
+    ORDER BY priority DESC
+  `, [date]);
+}

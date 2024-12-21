@@ -8,8 +8,6 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {
-  SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,8 +15,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
 import { CreateBoardDialog } from './create-board-dialog';
+import { useState } from 'react';
 
 export function NavMain({
   items,
@@ -36,11 +34,13 @@ export function NavMain({
   }[];
   refreshBoards?: () => void;
 }) {
+  const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState(false);
+
   if (items[0]?.items?.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4 py-4">
         <p className="text-sm text-muted-foreground">No boards found</p>
-        <CreateBoardDialog onBoardCreated={refreshBoards}>
+        <CreateBoardDialog open={isCreateBoardDialogOpen} onOpenChange={setIsCreateBoardDialogOpen}  onBoardCreated={refreshBoards}>
           <SidebarMenuButton size="sm" className="gap-2">
             <Plus className="h-4 w-4" />
             Create Board

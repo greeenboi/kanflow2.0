@@ -7,9 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   LayoutDashboard,
   KanbanSquare,
-  User as UserIcon,
   Search,
-  Plus,
 } from 'lucide-react';
 import { getUserBoards } from '@/actions/dashboard/kanban/boards';
 import type { Board } from '@/actions/dashboard/kanban/boards';
@@ -32,7 +30,6 @@ import {
 import { NavMain } from './nav-boards';
 import { Label } from '../ui/label';
 import { DatePicker } from './date-picker';
-import { CreateBoardDialog } from './create-board-dialog';
 
 const sidebarNavItems = [
   {
@@ -73,10 +70,7 @@ export function Sidebar() {
     })),
   };
 
-  const handleCreateBoard = () => {
-    // This will now be handled by the dialog
-  };
-
+  
   const refreshBoards = () => {
     // Refresh the boards list after creation
     const userId = user?.id || 1;
@@ -112,7 +106,6 @@ export function Sidebar() {
         </ScrollArea>
         <SidebarSeparator className=" bg-border border-border mx-0" />
         {/* implement task tracker on calendar */}
-        <Label className="sr-only">Tasks Tracker</Label>
         <DatePicker />
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Navigate</SidebarGroupLabel>
