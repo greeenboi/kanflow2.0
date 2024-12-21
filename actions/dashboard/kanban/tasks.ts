@@ -1,5 +1,8 @@
 import Database from '@tauri-apps/plugin-sql';
 
+
+export type TaskStatus = 'todo' | 'in_progress' | 'done' | 'blocked' | 'archived';
+
 export interface Task {
     id: number;
     board_id: number;
@@ -12,7 +15,7 @@ export interface Task {
     last_updated: string;
     due_date?: string;
     priority: 'low' | 'medium' | 'high' | 'urgent';
-    status: 'todo' | 'in_progress' | 'done' | 'blocked' | 'archived';
+    status: TaskStatus;
     labels?: string;
     comments_enabled: boolean;
     attachments?: string;
@@ -86,14 +89,23 @@ export async function updateTask(id: number, updates: Partial<Task>): Promise<vo
     await db.execute(sql, values);
 }
 
-export async function moveTask(taskId: number, newColumnId: number, newOrderNum: number): Promise<void> {
-    const db = await Database.load('sqlite:kanflow.db');
-    const sql = `
-        UPDATE tasks 
-        SET column_id = ?, order_num = ?, last_updated = CURRENT_TIMESTAMP 
-        WHERE id = ?
-    `;
-    await db.execute(sql, [newColumnId, newOrderNum, taskId]);
+// Update the moveTask function to include status update
+export async function moveTask(
+  taskId: number, 
+  newColumnId: number, 
+  newOrderNum: number,
+  newStatus: TaskStatus
+): Promise<void> {
+  const db = await Database.load('sqlite:kanflow.db');
+  const sql = `
+    UPDATE tasks 
+    SET column_id = ?, 
+        order_num = ?, 
+        status = ?,
+        last_updated = CURRENT_TIMESTAMP 
+    WHERE id = ?
+  `;
+  await db.execute(sql, [newColumnId, newOrderNum, newStatus, taskId]);
 }
 
 export async function archiveTask(id: number): Promise<void> {

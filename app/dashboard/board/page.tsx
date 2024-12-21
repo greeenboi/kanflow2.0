@@ -2,45 +2,29 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import {
-  DndContext,
-  DragOverlay,
-  closestCorners,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TaskDialog } from '@/components/tasks/task-dialog';
 import { DashboardShell } from '@/components/dashboard/shell';
 import { DashboardHeader } from '@/components/dashboard/header';
-import { KanbanColumn } from '@/components/kanban/column';
-import { KanbanCard } from '@/components/kanban/card';
 import { type Board, getBoardById } from '@/actions/dashboard/kanban/boards';
-import { getTasksByBoard, createTask, moveTask, type Task } from '@/actions/dashboard/kanban/tasks';
-import type { DragStartEvent, DragEndEvent, TaskFormData, KanbanDndContext } from '@/types/kanban';
-import { formatDistanceToNow } from 'date-fns';
+import { getTasksByBoard, moveTask, type Task, type TaskStatus, createTask } from '@/actions/dashboard/kanban/tasks';
+import type { TaskFormData } from '@/types/kanban';
+import { KanbanCard } from '@/components/kanban/card';
+import { TaskDetailsDialog } from '@/components/tasks/task-details-dialog';
 
-interface Column {
-  id: number;
+type Column = {
+  id: string;
   title: string;
-  taskIds: number[];
-}
+  status: TaskStatus;
+  tasks: Task[];
+};
 
-
-
-const DEFAULT_COLUMNS: { [key: string]: Column } = {
-  todo: { id: 1, title: 'To Do', taskIds: [] },
-  inProgress: { id: 2, title: 'In Progress', taskIds: [] },
-  done: { id: 3, title: 'Done', taskIds: [] },
+type PendingChange = {
+  taskId: number;
+  newColumnId: number;
+  orderNum: number;
+  status: TaskStatus;
 };
 
 export default function BoardPage() {
@@ -48,12 +32,17 @@ export default function BoardPage() {
   const boardId = Number(searchParams.get('board'));
   
   const [boardMetadata, setBoardMetadata] = useState<Board | null>(null);
-  const [columns, setColumns] = useState(DEFAULT_COLUMNS);
-  const [tasks, setTasks] = useState<{ [key: number]: Task }>({});
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [columns, setColumns] = useState<Column[]>([
+    { id: '1', title: 'To Do', status: 'todo', tasks: [] },
+    { id: '2', title: 'In Progress', status: 'in_progress', tasks: [] },
+    { id: '3', title: 'Done', status: 'done', tasks: [] },
+  ]);
+  const [pendingChanges, setPendingChanges] = useState<PendingChange[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [boardTitle, setBoardTitle] = useState('Loading...');
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [selectedTaskForDetails, setSelectedTaskForDetails] = useState<Task | null>(null);
 
   useEffect(() => {
     async function loadBoardData() {
@@ -66,85 +55,111 @@ export default function BoardPage() {
       }
 
       const boardTasks = await getTasksByBoard(boardId);
-      const tasksById: { [key: number]: Task } = {};
-      const columnTaskIds: { [key: string]: number[] } = {
-        todo: [],
-        inProgress: [],
-        done: [],
-      };
-
-      for (const task of boardTasks) {
-        tasksById[task.id] = task;
-        const columnKey = task.status === 'todo' ? 'todo' : 
-                         task.status === 'in_progress' ? 'inProgress' : 'done';
-        columnTaskIds[columnKey].push(task.id);
-      }
-
-      setTasks(tasksById);
-      setColumns({
-        todo: { ...DEFAULT_COLUMNS.todo, taskIds: columnTaskIds.todo },
-        inProgress: { ...DEFAULT_COLUMNS.inProgress, taskIds: columnTaskIds.inProgress },
-        done: { ...DEFAULT_COLUMNS.done, taskIds: columnTaskIds.done },
-      });
+      
+      setColumns(prev => prev.map(column => ({
+        ...column,
+        tasks: boardTasks.filter(task => task.status === column.status)
+      })));
     }
 
     loadBoardData();
   }, [boardId]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  const moveTaskToColumn = (taskId: number, fromColumnId: string, toColumnId: string) => {
+    const newColumns = [...columns];
+    const fromColumn = newColumns.find(col => col.id === fromColumnId);
+    const toColumn = newColumns.find(col => col.id === toColumnId);
+    
+    if (!fromColumn || !toColumn) return;
+    
+    const taskIndex = fromColumn.tasks.findIndex(task => task.id === taskId);
+    if (taskIndex === -1) return;
+    
+    const [task] = fromColumn.tasks.splice(taskIndex, 1);
+    const updatedTask = {
+      ...task,
+      status: toColumn.status, 
+      column_id: Number(toColumn.id)
+    };
+    toColumn.tasks.push(updatedTask);
+    
+    setColumns(newColumns);
+    
+    setPendingChanges(prev => [...prev, {
+      taskId,
+      newColumnId: Number(toColumn.id),
+      orderNum: toColumn.tasks.length,
+      status: toColumn.status 
+    }]);
+  };
 
-  function handleDragStart(event: DragStartEvent) {
-    setActiveId(event.active.id);
-  }
-
-  async function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    const activeColumn = Object.values(columns).find(col =>
-      col.taskIds.includes(activeId)
-    );
-    const overColumn = Object.values(columns).find(col =>
-      col.taskIds.includes(overId)
-    );
-
-    if (!activeColumn || !overColumn) return;
-
-    // Update local state first
-    if (activeColumn.id === overColumn.id) {
-      const newTaskIds = [...activeColumn.taskIds];
-      const oldIndex = newTaskIds.indexOf(activeId);
-      const newIndex = newTaskIds.indexOf(overId);
-
-      newTaskIds.splice(oldIndex, 1);
-      newTaskIds.splice(newIndex, 0, activeId);
-
-      setColumns({
-        ...columns,
-        [activeColumn.id]: {
-          ...activeColumn,
-          taskIds: newTaskIds,
-        },
-      });
-    } else {
-      // Similar column update logic...
+  const handleBatchSave = async () => {
+    try {
+      for (const change of pendingChanges) {
+        // Update both position and status in the database
+        await moveTask(
+          change.taskId,
+          change.newColumnId,
+          change.orderNum,
+          change.status // Add status parameter
+        );
+      }
+      setPendingChanges([]);
+    } catch (error) {
+      console.error('Failed to save changes:', error);
     }
+  };
 
-    // Update the database
-    const newStatus = overColumn.id === 1 ? 'todo' : 
-                     overColumn.id === 2 ? 'in_progress' : 'done';
-    await moveTask(activeId, overColumn.id, overId);
+  const handleTaskSave = async (taskData: TaskFormData) => {
+    try {
+      if (selectedTask) {
+        // Handle update logic coming soon
+      } else {
+        const newTaskId = await createTask({
+          board_id: boardId,
+          title: taskData.title,
+          description: taskData.description,
+          column_id: 1, // Start in todo column
+          priority: taskData.priority,
+          due_date: taskData.due_date?.toISOString(),
+        });
 
-    setActiveId(null);
-  }
+        // Create the new task object
+        const newTask: Task = {
+          id: newTaskId,
+          board_id: boardId,
+          title: taskData.title,
+          description: taskData.description || '',
+          priority: taskData.priority || 'medium',
+          status: 'todo',
+          due_date: taskData.due_date?.toISOString(),
+          created_at: new Date().toISOString(),
+          last_updated: new Date().toISOString(),
+          comments_enabled: true,
+          estimated_time: taskData.estimated_time ? Number(taskData.estimated_time) : undefined,
+          markdown_content: taskData.markdown_content,
+          time_to_complete: taskData.time_to_complete,
+          checklist: JSON.stringify(taskData.checklist || []),
+          order_num: 0,
+          column_id: 1
+        };
+
+        // Update columns state
+        setColumns(prev => prev.map(col => {
+          if (col.id === '1') { // Add to todo column
+            return {
+              ...col,
+              tasks: [...col.tasks, newTask]
+            };
+          }
+          return col;
+        }));
+      }
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to save task:', error);
+    }
+  };
 
   return (
     <DashboardShell>
@@ -153,114 +168,72 @@ export default function BoardPage() {
         text={boardMetadata?.description || "Manage and organize your tasks"}
       >
         <div className="flex flex-col gap-2 items-end">
-          {boardMetadata && (
-            <div className="text-sm text-muted-foreground text-right">
-              <p>Visibility: {boardMetadata.visibility}</p>
-              <p>Created {formatDistanceToNow(new Date(boardMetadata.created_at))} ago</p>
-              <p>Last updated {formatDistanceToNow(new Date(boardMetadata.last_updated))} ago</p>
-            </div>
+          {pendingChanges.length > 0 && (
+            <Button 
+              onClick={handleBatchSave}
+              className="mb-2"
+            >
+              Save Changes ({pendingChanges.length})
+            </Button>
           )}
-          <Button
-            onClick={() => {
-              setSelectedTask(null);
-              setIsDialogOpen(true);
-            }}
-          >
+          {/* ...existing metadata display... */}
+          <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Task
           </Button>
         </div>
       </DashboardHeader>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          {Object.values(columns).map(column => (
-            <KanbanColumn key={column.id} column={column}>
-              <SortableContext items={column.taskIds}>
-                {column.taskIds.map(taskId => (
-                  <KanbanCard
-                    key={taskId}
-                    task={tasks[taskId]}
-                    onClick={() => {
-                      setSelectedTask(tasks[taskId]);
-                      setIsDialogOpen(true);
-                    }}
-                  />
-                ))}
-              </SortableContext>
-            </KanbanColumn>
-          ))}
-          <DragOverlay>
-            {activeId ? (
-              <Card className="p-4 cursor-grabbing">
-                <h4 className="font-medium">{tasks[activeId].title}</h4>
-                <p className="text-sm text-muted-foreground">
-                  {tasks[activeId].description}
-                </p>
-              </Card>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+      <div className="grid grid-cols-3 gap-4">
+        {columns.map((column, columnIndex) => (
+          <div key={column.id} className="flex flex-col gap-4 p-4 bg-secondary/50 rounded-xl">
+            <h3 className="font-semibold text-lg">{column.title}</h3>
+            <div className="flex flex-col gap-2">
+              {column.tasks.map((task) => (
+                <KanbanCard 
+                  key={task.id} 
+                  task={task} 
+                  onClick={() => {
+                    setSelectedTaskForDetails(task);
+                    setIsDetailsDialogOpen(true);
+                  }}   
+                  MoveTaskChild={
+                    <>
+                      <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => moveTaskToColumn(task.id, column.id, columns[columnIndex - 1]?.id)}
+                          disabled={columnIndex === 0}
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => moveTaskToColumn(task.id, column.id, columns[columnIndex + 1]?.id)}
+                          disabled={columnIndex === columns.length - 1}
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </>
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       <TaskDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         task={selectedTask}
-        onSave={async (taskData: TaskFormData) => {
-          if (selectedTask) {
-            // Handle update
-          } else {
-            const newTaskId = await createTask({
-              board_id: boardId,
-              title: taskData.title,
-              description: taskData.description,
-              column_id: columns.todo.id,
-              priority: taskData.priority,
-              due_date: taskData.due_date?.toISOString(),
-            });
-            
-            // Create a proper Task object
-            const newTask: Task = {
-              id: newTaskId,
-              board_id: boardId,
-              title: taskData.title,
-              description: taskData.description,
-              priority: taskData.priority || 'medium',
-              status: 'todo',
-              due_date: taskData.due_date?.toISOString(),
-              created_at: new Date().toISOString(),
-              last_updated: new Date().toISOString(),
-              comments_enabled: true,
-              estimated_time: taskData.estimated_time,
-              markdown_content: taskData.markdown_content,
-              time_to_complete: taskData.time_to_complete,
-              checklist: JSON.stringify(taskData.checklist || []),
-              order_num: 0,
-              column_id: columns.todo.id
-            };
-            
-            // Update local state with the complete Task object
-            setTasks(prev => ({
-              ...prev,
-              [newTaskId]: newTask
-            }));
-            
-            setColumns(prev => ({
-              ...prev,
-              todo: {
-                ...prev.todo,
-                taskIds: [...prev.todo.taskIds, newTaskId]
-              }
-            }));
-          }
-          setIsDialogOpen(false);
-        }}
+        onSave={handleTaskSave}
+      />
+      <TaskDetailsDialog
+        open={isDetailsDialogOpen}
+        onOpenChange={setIsDetailsDialogOpen}
+        task={selectedTaskForDetails}
       />
     </DashboardShell>
   );

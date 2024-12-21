@@ -1,7 +1,5 @@
 'use client';
 
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, Clock, CheckSquare } from 'lucide-react';
@@ -15,23 +13,10 @@ interface ChecklistItem {
 interface KanbanCardProps {
   task: Task;
   onClick: () => void;
+  MoveTaskChild: React.ReactNode;
 }
 
-export function KanbanCard({ task, onClick }: KanbanCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: task.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+export function KanbanCard({ task, onClick, MoveTaskChild }: KanbanCardProps) {
 
   const priorityColors = {
     low: 'bg-green-100 text-green-800',
@@ -42,12 +27,12 @@ export function KanbanCard({ task, onClick }: KanbanCardProps) {
 
   return (
     <Card
-      ref={setNodeRef}
-      style={style}
-      className="p-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow space-y-2"
-      onClick={onClick}
-      {...attributes}
-      {...listeners}
+      className="p-4 hover:shadow-md transition-shadow space-y-2 cursor-pointer"
+      onClick={(e) => {
+        if (e.currentTarget === e.target || e.target instanceof Element && !e.target.closest('button')) {
+          onClick();
+        }
+      }}
     >
       <h4 className="font-medium">{task.title}</h4>
       {task.description && (
@@ -80,6 +65,7 @@ export function KanbanCard({ task, onClick }: KanbanCardProps) {
           </Badge>
         )}
       </div>
+      {MoveTaskChild}
     </Card>
   );
 }
