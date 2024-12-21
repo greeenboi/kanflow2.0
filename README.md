@@ -3,11 +3,11 @@
 KanFlow is a modern desktop application built with Next.js and Tauri, combining web technologies with native performance to deliver a seamless user experience.
 
 ## Contents
-1) [Features and USP](https://github.com/greeenboi/kanflow2.0/edit/master/README.md#features-and-usp)
-2) [Gallery](https://github.com/greeenboi/kanflow2.0/edit/master/README.md#gallery)
-3) [What We Used](https://github.com/greeenboi/kanflow2.0/edit/master/README.md#what-we-used)
-4) [Installation](https://github.com/greeenboi/kanflow2.0/edit/master/README.md#installation)
-5) [Contribution](https://github.com/greeenboi/kanflow2.0/edit/master/README.md#contribution)
+1) [Features and USP](https://github.com/greeenboi/kanflow2.0?tab=readme-ov-file#features-and-usp)
+2) [Gallery](https://github.com/greeenboi/kanflow2.0?tab=readme-ov-file#gallery)
+3) [What We Used](https://github.com/greeenboi/kanflow2.0?tab=readme-ov-file#what-we-used)
+4) [Installation](https://github.com/greeenboi/kanflow2.0?tab=readme-ov-file#installation)
+5) [Contribution](https://github.com/greeenboi/kanflow2.0?tab=readme-ov-file#contribution)
 
 ## Features and USP
 
