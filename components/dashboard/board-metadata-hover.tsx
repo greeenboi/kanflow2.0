@@ -3,7 +3,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
-import { Calendar, Globe, Lock, Users, Clock } from 'lucide-react';
+import { Calendar, Globe, Lock, Clock, Eye, EyeClosed } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import type { Board } from '@/actions/dashboard/kanban/boards';
 
@@ -38,12 +38,12 @@ export function BoardMetadataHover({
             <div className="flex items-center text-sm text-muted-foreground">
               {board.visibility === 'public' ? (
                 <>
-                  <Globe className="mr-2 h-4 w-4" />
+                  <Eye className="mr-2 h-4 w-4" />
                   <span>Public board</span>
                 </>
               ) : (
                 <>
-                  <Lock className="mr-2 h-4 w-4" />
+                  <EyeClosed className="mr-2 h-4 w-4" />
                   <span>Private board</span>
                 </>
               )}

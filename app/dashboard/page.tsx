@@ -1,5 +1,5 @@
+'use client';
 import { DashboardHeader } from '@/components/dashboard/header';
-import { DashboardShell } from '@/components/dashboard/shell';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -8,46 +8,88 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import Link from 'next/link';
 import { PlusCircle } from 'lucide-react';
 import { CreateBoardDialog } from '@/components/dashboard/create-board-dialog';
+import { useHotkeys } from 'react-hotkeys-hook';
+
+import { RecentTasks } from '@/components/dashboard/recent-tasks';
+import { getRecentTasks, getTaskStats, type RecentTask, type TaskStats } from '@/actions/dashboard/kanban/tasks';
+import { useEffect, useState, useCallback } from 'react';
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<TaskStats | null>(null);
+  const [recentTasks, setRecentTasks] = useState<RecentTask[]>([]);
+  const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState(false);
+
+  useHotkeys('ctrl+shift+n', (e) => {
+    e.preventDefault();
+    setIsCreateBoardDialogOpen(true);
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    const stats = await getTaskStats(1);
+    const recentTasks = await getRecentTasks(1);
+    setStats(stats);
+    setRecentTasks(recentTasks);
+  }, []);
+  useEffect(() => {
+    fetchData();
+  }
+  , [fetchData]);
+
   return (
-    <DashboardShell>
+    <>
       <DashboardHeader
         heading="Dashboard"
         text="Manage your tasks and projects"
-      />
+      >
+        <div className="flex items-center gap-2">
+          <CreateBoardDialog 
+            open={isCreateBoardDialogOpen}
+            onOpenChange={setIsCreateBoardDialogOpen}
+            onBoardCreated={() => {
+              // Refresh stats after board creation
+              fetchData();
+            }}
+          >
+            <Button onClick={() => setIsCreateBoardDialogOpen(true)}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New Board
+            </Button>
+          </CreateBoardDialog>
+        </div>
+      </DashboardHeader>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>Active Tasks</CardTitle>
-            <CardDescription>You have 5 tasks in progress</CardDescription>
+            <CardDescription>Tasks in progress</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">5</div>
+            { stats && <div className="text-2xl font-bold">{stats.active_tasks}</div>}
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle>Completed Tasks</CardTitle>
-            <CardDescription>You have completed 12 tasks</CardDescription>
+            <CardDescription>Successfully finished tasks</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            { stats && <div className="text-2xl font-bold">{stats.completed_tasks}</div>}
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle>Total Boards</CardTitle>
-            <CardDescription>You have 3 active boards</CardDescription>
+            <CardDescription>Active project boards</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            { stats && <div className="text-2xl font-bold">{stats.total_boards}</div>}
           </CardContent>
         </Card>
       </div>
-    </DashboardShell>
+
+      <RecentTasks tasks={recentTasks} />
+    </>
   );
 }

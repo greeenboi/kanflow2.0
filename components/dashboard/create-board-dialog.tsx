@@ -26,15 +26,18 @@ import type { CreateBoardData } from '@/actions/dashboard/kanban/boards';
 import { useUser } from '@/context/UserContext';
 
 interface CreateBoardDialogProps {
+  open: boolean;
   children: React.ReactNode;
+  onOpenChange: (open: boolean) => void;
   onBoardCreated?: () => void;
 }
 
 export function CreateBoardDialog({
+  open,
   children,
+  onOpenChange,
   onBoardCreated,
 }: CreateBoardDialogProps) {
-  const [open, setOpen] = useState(false);
   const { user } = useUser();
   const [formData, setFormData] = useState<Partial<CreateBoardData>>({
     board_type: 'kanban',
@@ -52,7 +55,7 @@ export function CreateBoardDialog({
         user_id: user.id,
         owner_id: user.id,
       } as CreateBoardData);
-      setOpen(false);
+      onOpenChange(false);
       onBoardCreated?.();
     } catch (error) {
       console.error('Failed to create board:', error);
@@ -60,7 +63,7 @@ export function CreateBoardDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>

@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Plus, ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { TaskDialog } from '@/components/tasks/task-dialog';
-import { DashboardShell } from '@/components/dashboard/shell';
 import { DashboardHeader } from '@/components/dashboard/header';
 import { type Board, getBoardById } from '@/actions/dashboard/kanban/boards';
 import {
@@ -21,7 +20,7 @@ import { TaskDetailsDialog } from '@/components/tasks/task-details-dialog';
 import { CoolMode } from '@/components/ui/cool-mode';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { BoardMetadataHover } from '@/components/dashboard/board-metadata-hover';
-import { KeyboardShortcuts } from '@/components/ui/keyboard-shortcuts';
+import { useRouter } from 'next/navigation';
 
 type Column = {
   id: string;
@@ -38,8 +37,10 @@ type PendingChange = {
 };
 
 export default function BoardPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const boardId = Number(searchParams.get('board'));
+  const taskId = searchParams.get('task');
 
   const [boardMetadata, setBoardMetadata] = useState<Board | null>(null);
   const [columns, setColumns] = useState<Column[]>([
@@ -73,10 +74,19 @@ export default function BoardPage() {
           tasks: boardTasks.filter(task => task.status === column.status),
         }))
       );
+
+      // If taskId is present in URL, find and open that task
+      if (taskId) {
+        const task = boardTasks.find(t => t.id === Number(taskId));
+        if (task) {
+          setSelectedTaskForDetails(task);
+          setIsDetailsDialogOpen(true);
+        }
+      }
     }
 
     loadBoardData();
-  }, [boardId]);
+  }, [boardId, taskId]);
 
   const moveTaskToColumn = (
     taskId: number,
@@ -207,18 +217,28 @@ export default function BoardPage() {
     [setIsDialogOpen]
   );
 
+  // Add this new function to handle dialog close
+  const handleDetailsDialogClose = (open: boolean) => {
+    setIsDetailsDialogOpen(open);
+    if (!open) {
+      // Remove task parameter from URL when dialog is closed
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('task');
+      router.replace(`?${newParams.toString()}`);
+    }
+  };
+
   return (
-    <DashboardShell>
+    <>
       <DashboardHeader
         heading={boardTitle}
         metadata={
           <BoardMetadataHover board={boardMetadata}>
-            <span className="cursor-help">Manage and organize your tasks</span>
+            <span className="cursor-help">{boardMetadata?.description}</span>
           </BoardMetadataHover>
         }
       >
         <div className="flex flex-row gap-2 justify-end items-center">
-          <KeyboardShortcuts />
           {pendingChanges.length > 0 && (
             <CoolMode>
               <Button
@@ -300,9 +320,9 @@ export default function BoardPage() {
       />
       <TaskDetailsDialog
         open={isDetailsDialogOpen}
-        onOpenChange={setIsDetailsDialogOpen}
+        onOpenChange={handleDetailsDialogClose}
         task={selectedTaskForDetails}
       />
-    </DashboardShell>
+    </>
   );
 }

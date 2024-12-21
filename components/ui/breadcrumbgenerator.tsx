@@ -6,14 +6,13 @@ import { usePathname } from 'next/navigation';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Slash } from 'lucide-react';
+import { Home } from "lucide-react";
 
 const formatLabel = (segment: string): string => {
   return segment
@@ -22,11 +21,8 @@ const formatLabel = (segment: string): string => {
     .join(' ');
 };
 
-const ITEMS_TO_DISPLAY = 3;
 
 export function BreadcrumbComponent() {
-  const [open, setOpen] = React.useState(false);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
   const pathname = usePathname();
 
   const generateBreadcrumbs = () => {
@@ -45,9 +41,12 @@ export function BreadcrumbComponent() {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList className="rounded-lg border border-border bg-background px-3 py-2 shadow-sm shadow-black/5">
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Welcome</BreadcrumbLink>
+          <BreadcrumbLink href="/">
+            <Home size={16} strokeWidth={2} aria-hidden="true" />
+            <span className="sr-only">Home</span>
+          </BreadcrumbLink>
         </BreadcrumbItem>
         {items.slice(1).map((item, index) => (
           <React.Fragment key={index}>

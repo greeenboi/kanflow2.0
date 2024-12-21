@@ -41,6 +41,20 @@ export interface CreateTaskData {
   column_id: number;
 }
 
+export interface TaskStats {
+    active_tasks: number;
+    completed_tasks: number;
+    total_boards: number;
+}
+  
+export interface RecentTask {
+    id: number;
+    title: string;
+    board_id: number;
+    status: string;
+    created_at: string;
+}
+
 export async function createTask(taskData: CreateTaskData): Promise<number> {
   const db = await Database.load('sqlite:kanflow.db');
   // Get the highest order_num for the column and add 1
@@ -96,7 +110,7 @@ export async function updateTask(
   await db.execute(sql, values);
 }
 
-// Update the moveTask function to include status update
+
 export async function moveTask(
   taskId: number,
   newColumnId: number,
@@ -121,3 +135,28 @@ export async function archiveTask(id: number): Promise<void> {
     "UPDATE tasks SET status = 'archived', last_updated = CURRENT_TIMESTAMP WHERE id = ?";
   await db.execute(sql, [id]);
 }
+  
+  export async function getTaskStats(userId: number): Promise<TaskStats> {
+    const db = await Database.load('sqlite:kanflow.db');
+    
+    const stats = await db.select<TaskStats[]>(`
+      SELECT 
+        (SELECT COUNT(*) FROM tasks WHERE status = 'in_progress') as active_tasks,
+        (SELECT COUNT(*) FROM tasks WHERE status = 'done') as completed_tasks,
+        (SELECT COUNT(*) FROM boards WHERE is_archived = FALSE) as total_boards
+    `);
+  
+    return stats[0];
+  }
+  
+  export async function getRecentTasks(userId: number, limit = 6): Promise<RecentTask[]> {
+    const db = await Database.load('sqlite:kanflow.db');
+    
+    return await db.select<RecentTask[]>(`
+      SELECT id, title, status, created_at, board_id
+      FROM tasks 
+      WHERE status != 'archived'
+      ORDER BY created_at DESC 
+      LIMIT ?
+    `, [limit]);
+  }
