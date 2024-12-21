@@ -65,7 +65,7 @@ export default function Home() {
             <Card className="border-none bg-transparent w-full max-w-lg min-h-[605px]">
               <CardHeader className="space-y-1">
                 <CardTitle className="text-2xl font-bold">
-                  Welcome to Kanban
+                  Welcome to KanFlow
                 </CardTitle>
                 <CardDescription>
                   Sign in to your account or create a new one

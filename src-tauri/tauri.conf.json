@@ -2,12 +2,12 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "kanflow",
   "version": "0.2.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.kanflow.dev",
   "build": {
     "frontendDist": "../out",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "bun dev",
-    "beforeBuildCommand": "bun build"
+    "beforeBuildCommand": "yarn build"
   },
   "app": {
     "windows": [
@@ -35,13 +35,21 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": "msi",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "wix": {
+        "language": ["en-US", "pt-BR", "fr-FR"]
+      },
+      "nsis": {
+        "displayLanguageSelector": true
+      }
+    }
   }
 }

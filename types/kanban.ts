@@ -1,9 +1,4 @@
 import type { Task, TaskStatus } from '@/actions/dashboard/kanban/tasks';
-import type {
-  DragStartEvent as DndDragStartEvent,
-  DragEndEvent as DndDragEndEvent,
-  UniqueIdentifier,
-} from '@dnd-kit/core';
 
 export interface TaskFormData {
   title: string;
@@ -16,22 +11,6 @@ export interface TaskFormData {
   checklist?: Array<{ text: string; checked: boolean }>;
 }
 
-// Use types from @dnd-kit/core
-export type DragStartEvent = DndDragStartEvent;
-export type DragEndEvent = DndDragEndEvent;
-
-export type DNDType = {
-  id: UniqueIdentifier;
-  title: string;
-  items: {
-    id: UniqueIdentifier;
-    title: string;
-    // Add other Task properties
-    status: 'todo' | 'in_progress' | 'done';
-    column_id: number;
-    // ...other existing Task properties...
-  }[];
-};
 
 export type PendingChange = {
   taskId: number;
