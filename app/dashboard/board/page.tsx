@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { TaskDialog } from '@/components/tasks/task-dialog';
 import { DashboardShell } from '@/components/dashboard/shell';
 import { DashboardHeader } from '@/components/dashboard/header';
@@ -12,6 +12,10 @@ import { getTasksByBoard, moveTask, type Task, type TaskStatus, createTask } fro
 import type { TaskFormData } from '@/types/kanban';
 import { KanbanCard } from '@/components/kanban/card';
 import { TaskDetailsDialog } from '@/components/tasks/task-details-dialog';
+import { CoolMode } from '@/components/ui/cool-mode';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { BoardMetadataHover } from '@/components/dashboard/board-metadata-hover';
+import { KeyboardShortcuts } from '@/components/ui/keyboard-shortcuts';
 
 type Column = {
   id: string;
@@ -161,68 +165,90 @@ export default function BoardPage() {
     }
   };
 
+  // Add hotkey handlers
+  useHotkeys('ctrl+s', (e: KeyboardEvent) => {
+    e.preventDefault();
+    if (pendingChanges.length > 0) {
+      handleBatchSave();
+    }
+  }, [pendingChanges, handleBatchSave]);
+
+  useHotkeys('ctrl+n', (e: KeyboardEvent) => {
+    e.preventDefault();
+    setIsDialogOpen(true);
+  }, [setIsDialogOpen]);
+
   return (
     <DashboardShell>
       <DashboardHeader
         heading={boardTitle}
-        text={boardMetadata?.description || "Manage and organize your tasks"}
+        metadata={
+          <BoardMetadataHover board={boardMetadata}>
+            <span className="cursor-help">
+              Manage and organize your tasks
+            </span>
+          </BoardMetadataHover>
+        }
       >
-        <div className="flex flex-col gap-2 items-end">
+        <div className="flex flex-row gap-2 justify-end items-center">
+          <KeyboardShortcuts />
           {pendingChanges.length > 0 && (
-            <Button 
-              onClick={handleBatchSave}
-              className="mb-2"
-            >
-              Save Changes ({pendingChanges.length})
-            </Button>
+            <CoolMode>
+              <Button 
+                onClick={handleBatchSave}
+                className="flex gap-2 items-center"
+                >
+                <Save /> Save ({pendingChanges.length})
+              </Button>
+            </CoolMode>
           )}
-          {/* ...existing metadata display... */}
           <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Task
           </Button>
         </div>
       </DashboardHeader>
-
-      <div className="grid grid-cols-3 gap-4">
-        {columns.map((column, columnIndex) => (
-          <div key={column.id} className="flex flex-col gap-4 p-4 bg-secondary/50 rounded-xl">
-            <h3 className="font-semibold text-lg">{column.title}</h3>
-            <div className="flex flex-col gap-2">
-              {column.tasks.map((task) => (
-                <KanbanCard 
-                  key={task.id} 
-                  task={task} 
-                  onClick={() => {
-                    setSelectedTaskForDetails(task);
-                    setIsDetailsDialogOpen(true);
-                  }}   
-                  MoveTaskChild={
-                    <>
-                      <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => moveTaskToColumn(task.id, column.id, columns[columnIndex - 1]?.id)}
-                          disabled={columnIndex === 0}
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
+      <section className='relative w-full overflow-hidden h-full'>
+        <div className="grid grid-cols-3 gap-4 overflow-auto h-full">
+          {columns.map((column, columnIndex) => (
+            <div key={column.id} className="flex flex-col gap-4 p-4 bg-secondary/50 rounded-xl h-full">
+              <h3 className="font-semibold text-lg">{column.title}</h3>
+              <div className="flex flex-col gap-2">
+                {column.tasks.map((task) => (
+                  <KanbanCard 
+                    key={task.id} 
+                    task={task} 
+                    onClick={() => {
+                      setSelectedTaskForDetails(task);
+                      setIsDetailsDialogOpen(true);
+                    }}   
+                    MoveTaskChild={
+                      <>
                         <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => moveTaskToColumn(task.id, column.id, columns[columnIndex + 1]?.id)}
-                          disabled={columnIndex === columns.length - 1}
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                    </>
-                  }
-                />
-              ))}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => moveTaskToColumn(task.id, column.id, columns[columnIndex - 1]?.id)}
+                            disabled={columnIndex === 0}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => moveTaskToColumn(task.id, column.id, columns[columnIndex + 1]?.id)}
+                            disabled={columnIndex === columns.length - 1}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                      </>
+                    }
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
 
       <TaskDialog
         open={isDialogOpen}

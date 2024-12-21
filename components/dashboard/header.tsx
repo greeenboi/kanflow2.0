@@ -3,12 +3,14 @@
 interface DashboardHeaderProps {
   heading: string;
   text?: string;
+  metadata?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 export function DashboardHeader({
   heading,
   text,
+  metadata,
   children,
 }: DashboardHeaderProps) {
   
@@ -18,6 +20,7 @@ export function DashboardHeader({
       <div className="grid gap-1">
         <h1 className="font-heading text-3xl md:text-4xl">{heading}</h1>
         {text && <p className="text-lg text-muted-foreground">{text}</p>}
+        {metadata}
       </div>
       {children}
     </div>
