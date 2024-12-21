@@ -80,7 +80,9 @@ export default function Home() {
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="register">Register</TabsTrigger>
                   </TabsList>
-                  <Suspense fallback={<RefreshCcw className="mx-auto animate-spin" />}>
+                  <Suspense
+                    fallback={<RefreshCcw className="mx-auto animate-spin" />}
+                  >
                     <AnimatePresence mode="wait" initial={false}>
                       <TabsContent
                         value="login"
@@ -107,17 +109,17 @@ export default function Home() {
                         key={tab}
                       >
                         <motion.div
-                        variants={slideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{
-                          x: { type: 'spring', stiffness: 300, damping: 30 },
-                          opacity: { duration: 0.2 },
-                        }}
-                        custom={1}
+                          variants={slideVariants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{
+                            x: { type: 'spring', stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 },
+                          }}
+                          custom={1}
                         >
-                        <RegisterForm />
+                          <RegisterForm />
                         </motion.div>
                       </TabsContent>
                     </AnimatePresence>

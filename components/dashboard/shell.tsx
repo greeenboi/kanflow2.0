@@ -1,8 +1,8 @@
 'use client';
-import { useUser } from "@/context/UserContext";
+import { useUser } from '@/context/UserContext';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Sidebar } from '@/components/dashboard/sidebar';
-import { BreadcrumbComponent } from "../ui/breadcrumbgenerator";
+import { BreadcrumbComponent } from '../ui/breadcrumbgenerator';
 
 interface DashboardShellProps {
   children: React.ReactNode;

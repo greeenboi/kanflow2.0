@@ -1,12 +1,22 @@
 'use client';
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Form,
   FormControl,
@@ -22,7 +32,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AlertTriangleIcon, ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, CalendarIcon, PlusCircle, Trash2 } from 'lucide-react';
+import {
+  AlertTriangleIcon,
+  ArrowDownIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  CalendarIcon,
+  PlusCircle,
+  Trash2,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -39,13 +57,13 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import { Check, ChevronsUpDown } from "lucide-react"
+} from '@/components/ui/command';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { PopoverPortal } from '@radix-ui/react-popover';
 
 const timeOptions = Array.from({ length: 49 }, (_, i) => {
   const hours = Math.floor(i / 2);
-  const minutes = i % 2 === 0 ? "00" : "30";
+  const minutes = i % 2 === 0 ? '00' : '30';
   const value = `${hours}.${minutes}`;
   const label = `${hours}:${minutes}`;
   return { label, value };
@@ -59,12 +77,14 @@ const taskFormSchema = z.object({
   estimated_time: z.string().optional(),
   markdown_content: z.string().optional(),
   time_to_complete: z.string().optional(),
-  checklist: z.array(
-    z.object({
-      text: z.string(),
-      checked: z.boolean(),
-    })
-  ).optional(),
+  checklist: z
+    .array(
+      z.object({
+        text: z.string(),
+        checked: z.boolean(),
+      })
+    )
+    .optional(),
 });
 
 interface TaskDialogProps {
@@ -74,7 +94,12 @@ interface TaskDialogProps {
   onSave: (data: TaskFormData) => Promise<void>;
 }
 
-export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps) {
+export function TaskDialog({
+  open,
+  onOpenChange,
+  task,
+  onSave,
+}: TaskDialogProps) {
   const form = useForm<z.infer<typeof taskFormSchema>>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
@@ -82,7 +107,7 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
       description: task?.description || '',
       priority: task?.priority || 'medium',
       due_date: task?.due_date ? new Date(task.due_date) : undefined,
-      estimated_time: task?.estimated_time?.toString() || "",
+      estimated_time: task?.estimated_time?.toString() || '',
       markdown_content: task?.markdown_content || '',
       time_to_complete: task?.time_to_complete || '',
       checklist: task?.checklist ? JSON.parse(task.checklist) : [],
@@ -92,7 +117,9 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
   async function onSubmit(data: z.infer<typeof taskFormSchema>) {
     const formData = {
       ...data,
-      estimated_time: data.estimated_time ? Number.parseFloat(data.estimated_time) : undefined,
+      estimated_time: data.estimated_time
+        ? Number.parseFloat(data.estimated_time)
+        : undefined,
     };
     await onSave(formData);
     form.reset();
@@ -106,12 +133,17 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
             {task ? 'Edit Task' : 'Create Task'}
           </DialogTitle>
           <DialogDescription>
-            {task ? 'Make changes to your task here.' : 'Add a new task to your list.'}
+            {task
+              ? 'Make changes to your task here.'
+              : 'Add a new task to your list.'}
           </DialogDescription>
         </DialogHeader>
         <Separator />
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid gap-4 py-4"
+          >
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -120,7 +152,11 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input {...field} className="text-lg" placeholder="Enter task title" />
+                      <Input
+                        {...field}
+                        className="text-lg"
+                        placeholder="Enter task title"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -134,7 +170,11 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea {...field} placeholder="Enter task description" className="min-h-[100px]" />
+                      <Textarea
+                        {...field}
+                        placeholder="Enter task description"
+                        className="min-h-[100px]"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -151,7 +191,10 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Priority</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select priority" />
@@ -193,21 +236,23 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                 control={form.control}
                 name="due_date"
                 render={({ field }) => (
-                  <FormItem className='row-span-2 flex flex-col items-center'>
-                  <FormLabel className=' w-full text-left'>Due Date</FormLabel>
-                  <FormControl>
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      className='border rounded-md'
-                      disabled={(date) =>
-                        date < new Date(new Date().setHours(0, 0, 0, 0))
-                      }
-                      initialFocus
-                    />
-                  </FormControl>
-                  <FormMessage />
+                  <FormItem className="row-span-2 flex flex-col items-center">
+                    <FormLabel className=" w-full text-left">
+                      Due Date
+                    </FormLabel>
+                    <FormControl>
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        className="border rounded-md"
+                        disabled={date =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0))
+                        }
+                        initialFocus
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -226,15 +271,17 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                             // biome-ignore lint/a11y/useSemanticElements: <explanation>
                             role="combobox"
                             className={cn(
-                              "w-full justify-between",
-                              !field.value && "text-muted-foreground"
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
                             )}
                           >
                             {field.value
-                              ? `${timeOptions.find(
-                                  (time) => time.value === field.value
-                                )?.label} hours`
-                              : "Select time"}
+                              ? `${
+                                  timeOptions.find(
+                                    time => time.value === field.value
+                                  )?.label
+                                } hours`
+                              : 'Select time'}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </FormControl>
@@ -243,35 +290,38 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                         {/* This had gotta be the wierdest code i've ever written, for the future me for ref, 
                         don't remove the popover content wrapping hte popover content. it will mess up the inputs */}
                         {/* <PopoverContent className='bg-transparent border-none shadow-none'> */}
-                          <PopoverContent className="w-[200px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search time..." />
-                              <CommandList>
-                                <CommandEmpty>No time found.</CommandEmpty>
-                                <CommandGroup>
-                                  {timeOptions.map((time) => (
-                                    <CommandItem
-                                      value={time.label}
-                                      key={time.value}
-                                      onSelect={() => {
-                                        form.setValue("estimated_time", time.value)
-                                      }}
-                                    >
-                                      {time.label} hours
-                                      <Check
-                                        className={cn(
-                                          "ml-auto h-4 w-4",
-                                          time.value === field.value
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
+                        <PopoverContent className="w-[200px] p-0">
+                          <Command>
+                            <CommandInput placeholder="Search time..." />
+                            <CommandList>
+                              <CommandEmpty>No time found.</CommandEmpty>
+                              <CommandGroup>
+                                {timeOptions.map(time => (
+                                  <CommandItem
+                                    value={time.label}
+                                    key={time.value}
+                                    onSelect={() => {
+                                      form.setValue(
+                                        'estimated_time',
+                                        time.value
+                                      );
+                                    }}
+                                  >
+                                    {time.label} hours
+                                    <Check
+                                      className={cn(
+                                        'ml-auto h-4 w-4',
+                                        time.value === field.value
+                                          ? 'opacity-100'
+                                          : 'opacity-0'
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
                         {/* </PopoverContent> */}
                       </PopoverPortal>
                     </Popover>
@@ -279,8 +329,6 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                   </FormItem>
                 )}
               />
-
-                
 
               {/* to be added */}
               {/* <FormField
@@ -366,19 +414,23 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                     <FormControl>
                       <div className="space-y-2">
                         {field.value?.map((item, index) => (
-                          <div key={index} className="flex items-center space-x-2">
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2"
+                          >
                             <Checkbox
                               checked={item.checked}
-                              onCheckedChange={(checked) => {
+                              onCheckedChange={checked => {
                                 // biome-ignore lint/style/noNonNullAssertion: <explanation>
                                 const newChecklist = [...field.value!];
-                                newChecklist[index].checked = checked as boolean;
+                                newChecklist[index].checked =
+                                  checked as boolean;
                                 field.onChange(newChecklist);
                               }}
                             />
                             <Input
                               value={item.text}
-                              onChange={(e) => {
+                              onChange={e => {
                                 // biome-ignore lint/style/noNonNullAssertion: <explanation>
                                 const newChecklist = [...field.value!];
                                 newChecklist[index].text = e.target.value;
@@ -407,7 +459,10 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
                           size="sm"
                           className="mt-2"
                           onClick={() => {
-                            field.onChange([...(field.value || []), { text: '', checked: false }]);
+                            field.onChange([
+                              ...(field.value || []),
+                              { text: '', checked: false },
+                            ]);
                           }}
                         >
                           <PlusCircle className="h-4 w-4 mr-2" />
@@ -422,7 +477,11 @@ export function TaskDialog({ open, onOpenChange, task, onSave }: TaskDialogProps
             </div>
 
             <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit">Save</Button>

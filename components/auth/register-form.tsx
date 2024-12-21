@@ -162,7 +162,7 @@ export default function RegisterForm() {
           name="confirmPassword"
           rules={{
             required: 'Confirm password is required',
-            validate: (value) =>
+            validate: value =>
               value === form.watch('password') || 'Passwords do not match',
           }}
           render={({ field }) => (

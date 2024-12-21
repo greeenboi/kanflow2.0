@@ -24,9 +24,9 @@
     }
   },
   "plugins": {
-    "deep-link":{
+    "deep-link": {
       "desktop": {
-        "schemes": ["kanflow","oauth://"]
+        "schemes": ["kanflow", "oauth://"]
       }
     },
     "sql": {

@@ -33,7 +33,7 @@ const loginUser = async ({ email, password, rememberMe }: LoginCredentials) => {
     console.log('loginUser: User store and cookies updated');
 
     // Remove localStorage/sessionStorage usage as we're using cookies now
-    
+
     toast.success('Login successful!');
     console.log('loginUser: Login successful');
     return safeUser;

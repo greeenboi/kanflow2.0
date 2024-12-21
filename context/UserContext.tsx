@@ -26,7 +26,9 @@ export function useUser() {
   return context;
 }
 
-const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const UserProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -44,13 +46,17 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         if (currentUser) {
           // If user is authenticated and tries to access public-only routes
           if (PUBLIC_ONLY_ROUTES.includes(pathname)) {
-            console.log('UserProvider: Authenticated user redirecting to dashboard');
+            console.log(
+              'UserProvider: Authenticated user redirecting to dashboard'
+            );
             router.push('/dashboard');
           }
         } else {
           // If user is not authenticated and tries to access protected routes
           if (PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
-            console.log('UserProvider: Unauthenticated user redirecting to login');
+            console.log(
+              'UserProvider: Unauthenticated user redirecting to login'
+            );
             router.push(`/auth?from=${pathname}`);
           }
         }
@@ -81,7 +87,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   };
 
   if (isLoading) {
-    return <RefreshCcw  className="animate-spin"/>;
+    return <RefreshCcw className="animate-spin" />;
   }
 
   return (

@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,51 +10,54 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { createBoard } from '@/actions/dashboard/kanban/boards'
-import type { CreateBoardData } from '@/actions/dashboard/kanban/boards'
-import { useUser } from '@/context/UserContext'
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { createBoard } from '@/actions/dashboard/kanban/boards';
+import type { CreateBoardData } from '@/actions/dashboard/kanban/boards';
+import { useUser } from '@/context/UserContext';
 
 interface CreateBoardDialogProps {
-  children: React.ReactNode
-  onBoardCreated?: () => void
+  children: React.ReactNode;
+  onBoardCreated?: () => void;
 }
 
-export function CreateBoardDialog({ children, onBoardCreated }: CreateBoardDialogProps) {
-  const [open, setOpen] = useState(false)
-  const { user } = useUser()
+export function CreateBoardDialog({
+  children,
+  onBoardCreated,
+}: CreateBoardDialogProps) {
+  const [open, setOpen] = useState(false);
+  const { user } = useUser();
   const [formData, setFormData] = useState<Partial<CreateBoardData>>({
     board_type: 'kanban',
     visibility: 'private',
-    background_color: '#FFFFFF'
-  })
+    background_color: '#FFFFFF',
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!user?.id || !formData.name) return
+    e.preventDefault();
+    if (!user?.id || !formData.name) return;
 
     try {
       await createBoard({
         ...formData,
         user_id: user.id,
         owner_id: user.id,
-      } as CreateBoardData)
-      setOpen(false)
-      onBoardCreated?.()
+      } as CreateBoardData);
+      setOpen(false);
+      onBoardCreated?.();
     } catch (error) {
-      console.error('Failed to create board:', error)
+      console.error('Failed to create board:', error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -74,7 +77,9 @@ export function CreateBoardDialog({ children, onBoardCreated }: CreateBoardDialo
                 id="name"
                 required
                 value={formData.name || ''}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -82,14 +87,21 @@ export function CreateBoardDialog({ children, onBoardCreated }: CreateBoardDialo
               <Textarea
                 id="description"
                 value={formData.description || ''}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="type">Board Type</Label>
               <Select
                 value={formData.board_type}
-                onValueChange={(value) => setFormData({ ...formData, board_type: value as CreateBoardData['board_type'] })}
+                onValueChange={value =>
+                  setFormData({
+                    ...formData,
+                    board_type: value as CreateBoardData['board_type'],
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
@@ -105,7 +117,12 @@ export function CreateBoardDialog({ children, onBoardCreated }: CreateBoardDialo
               <Label htmlFor="visibility">Visibility</Label>
               <Select
                 value={formData.visibility}
-                onValueChange={(value) => setFormData({ ...formData, visibility: value as CreateBoardData['visibility'] })}
+                onValueChange={value =>
+                  setFormData({
+                    ...formData,
+                    visibility: value as CreateBoardData['visibility'],
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select visibility" />
@@ -124,5 +141,5 @@ export function CreateBoardDialog({ children, onBoardCreated }: CreateBoardDialo
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

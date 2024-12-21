@@ -3,7 +3,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card"
+} from '@/components/ui/hover-card';
 import { Button } from './button';
 
 const shortcuts = [
@@ -24,11 +24,17 @@ export function KeyboardShortcuts() {
           <h4 className="text-sm font-semibold">Keyboard Shortcuts</h4>
           <div className="space-y-2">
             {shortcuts.map((shortcut, index) => (
-              <div key={index} className="flex items-center justify-between text-sm">
+              <div
+                key={index}
+                className="flex items-center justify-between text-sm"
+              >
                 <span>{shortcut.description}</span>
                 <div className="flex gap-1">
                   {shortcut.keys.map((key, keyIndex) => (
-                    <kbd key={keyIndex} className="px-2 py-1 bg-muted rounded text-xs">
+                    <kbd
+                      key={keyIndex}
+                      className="px-2 py-1 bg-muted rounded text-xs"
+                    >
                       {key}
                     </kbd>
                   ))}

@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { usePathname } from "next/navigation"
+import * as React from 'react';
+import { usePathname } from 'next/navigation';
 
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { useMediaQuery } from '@/hooks/use-media-query';
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -12,36 +12,36 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Slash } from "lucide-react"
+} from '@/components/ui/breadcrumb';
+import { Slash } from 'lucide-react';
 
 const formatLabel = (segment: string): string => {
   return segment
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
-}
+    .join(' ');
+};
 
-const ITEMS_TO_DISPLAY = 3
+const ITEMS_TO_DISPLAY = 3;
 
 export function BreadcrumbComponent() {
-  const [open, setOpen] = React.useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
-  const pathname = usePathname()
+  const [open, setOpen] = React.useState(false);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const pathname = usePathname();
 
   const generateBreadcrumbs = () => {
-    const segments = pathname.split('/').filter(segment => segment !== '')
-    const breadcrumbs = [{ href: "/", label: "Welcome" }]
+    const segments = pathname.split('/').filter(segment => segment !== '');
+    const breadcrumbs = [{ href: '/', label: 'Welcome' }];
 
     segments.forEach((segment, index) => {
-      const href = `/${segments.slice(0, index + 1).join('/')}`
-      breadcrumbs.push({ href, label: formatLabel(segment) })
-    })
+      const href = `/${segments.slice(0, index + 1).join('/')}`;
+      breadcrumbs.push({ href, label: formatLabel(segment) });
+    });
 
-    return breadcrumbs
-  }
+    return breadcrumbs;
+  };
 
-  const items = generateBreadcrumbs()
+  const items = generateBreadcrumbs();
 
   return (
     <Breadcrumb>
@@ -51,12 +51,10 @@ export function BreadcrumbComponent() {
         </BreadcrumbItem>
         {items.slice(1).map((item, index) => (
           <React.Fragment key={index}>
-            <BreadcrumbSeparator/>
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
               {item.href ? (
-                <BreadcrumbLink href={item.href}>
-                  {item.label}
-                </BreadcrumbLink>
+                <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
               ) : (
                 <BreadcrumbPage>{item.label}</BreadcrumbPage>
               )}
@@ -65,5 +63,5 @@ export function BreadcrumbComponent() {
         ))}
       </BreadcrumbList>
     </Breadcrumb>
-  )
+  );
 }

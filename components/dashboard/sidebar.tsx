@@ -4,12 +4,31 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LayoutDashboard, KanbanSquare, User as UserIcon, Search, Plus } from 'lucide-react';
+import {
+  LayoutDashboard,
+  KanbanSquare,
+  User as UserIcon,
+  Search,
+  Plus,
+} from 'lucide-react';
 import { getUserBoards } from '@/actions/dashboard/kanban/boards';
 import type { Board } from '@/actions/dashboard/kanban/boards';
 import { useUser } from '@/context/UserContext';
 import { NavUser } from './nav-user';
-import { SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarSeparator } from '../ui/sidebar';
+import {
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInput,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarSeparator,
+} from '../ui/sidebar';
 import { NavMain } from './nav-boards';
 import { Label } from '../ui/label';
 import { DatePicker } from './date-picker';
@@ -50,19 +69,19 @@ export function Sidebar() {
     isActive: true,
     items: filteredBoards.map(board => ({
       title: board.name,
-      url: `/dashboard/board?board=${board.id}`
-    }))
+      url: `/dashboard/board?board=${board.id}`,
+    })),
   };
 
   const handleCreateBoard = () => {
     // This will now be handled by the dialog
-  }
+  };
 
   const refreshBoards = () => {
     // Refresh the boards list after creation
-    const userId = user?.id || 1
-    fetchBoards()
-  }
+    const userId = user?.id || 1;
+    fetchBoards();
+  };
 
   return (
     <SidebarProvider className="flex h-screen w-72 flex-col fixed left-0 top-0 border-r">
@@ -87,18 +106,13 @@ export function Sidebar() {
               <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
             </SidebarGroupContent>
             <nav className="flex flex-col gap-2">
-              <NavMain 
-                items={[boardsNavItem]} 
-                refreshBoards={refreshBoards}
-              />
+              <NavMain items={[boardsNavItem]} refreshBoards={refreshBoards} />
             </nav>
           </SidebarGroup>
         </ScrollArea>
-        <SidebarSeparator className=' bg-border border-border mx-0' />
+        <SidebarSeparator className=" bg-border border-border mx-0" />
         {/* implement task tracker on calendar */}
-        <Label className="sr-only">
-          Tasks Tracker
-        </Label>
+        <Label className="sr-only">Tasks Tracker</Label>
         <DatePicker />
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Navigate</SidebarGroupLabel>
@@ -107,8 +121,15 @@ export function Sidebar() {
               const Icon = item.icon;
               return (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton variant={pathname === item.href ? 'default' : 'outline'} asChild>
-                    <Link key={item.href} href={item.href} className="w-full justify-start gap-2">
+                  <SidebarMenuButton
+                    variant={pathname === item.href ? 'default' : 'outline'}
+                    asChild
+                  >
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="w-full justify-start gap-2"
+                    >
                       <Icon className="h-4 w-4" />
                       {item.title}
                     </Link>
@@ -125,5 +146,3 @@ export function Sidebar() {
     </SidebarProvider>
   );
 }
-
-

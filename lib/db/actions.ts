@@ -23,7 +23,7 @@ export interface CreateUserData {
 }
 
 export async function createUser(userData: CreateUserData): Promise<void> {
-    const db = await Database.load('sqlite:kanflow.db');
+  const db = await Database.load('sqlite:kanflow.db');
   const sql = `
     INSERT INTO users (username, password, name, first_name, last_name, email)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -37,13 +37,13 @@ export async function createUser(userData: CreateUserData): Promise<void> {
     userData.email,
   ];
   const res = await db.execute(sql, params);
-    if (!res) {
-        throw new Error('Failed to create user');
-    }
+  if (!res) {
+    throw new Error('Failed to create user');
+  }
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
-    const db = await Database.load('sqlite:kanflow.db');
+  const db = await Database.load('sqlite:kanflow.db');
   const sql = `
     SELECT * FROM users WHERE email = ?
   `;
@@ -53,16 +53,17 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 }
 
 export async function getUserById(id: number): Promise<User | null> {
-    const db = await Database.load('sqlite:kanflow.db');
+  const db = await Database.load('sqlite:kanflow.db');
   const sql = 'SELECT * FROM users WHERE id = ?';
   const results = await db.select<User[]>(sql, [id]);
   return results.length ? results[0] : null;
 }
 
-export async function getUserByUsername(username: string): Promise<User | null> {
-const db = await Database.load('sqlite:kanflow.db');
+export async function getUserByUsername(
+  username: string
+): Promise<User | null> {
+  const db = await Database.load('sqlite:kanflow.db');
   const sql = 'SELECT * FROM users WHERE username = ?';
   const results = await db.select<User[]>(sql, [username]);
   return results.length ? results[0] : null;
 }
-

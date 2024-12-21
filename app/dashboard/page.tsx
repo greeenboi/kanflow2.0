@@ -1,4 +1,3 @@
-
 import { DashboardHeader } from '@/components/dashboard/header';
 import { DashboardShell } from '@/components/dashboard/shell';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,6 @@ import { PlusCircle } from 'lucide-react';
 import { CreateBoardDialog } from '@/components/dashboard/create-board-dialog';
 
 export default function DashboardPage() {
-
   return (
     <DashboardShell>
       <DashboardHeader

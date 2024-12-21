@@ -2,7 +2,7 @@ import type { Task, TaskStatus } from '@/actions/dashboard/kanban/tasks';
 import type {
   DragStartEvent as DndDragStartEvent,
   DragEndEvent as DndDragEndEvent,
-  UniqueIdentifier
+  UniqueIdentifier,
 } from '@dnd-kit/core';
 
 export interface TaskFormData {

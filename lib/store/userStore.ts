@@ -1,6 +1,10 @@
 import { load, type Store } from '@tauri-apps/plugin-store';
 import type { User } from '@/lib/db/actions';
-import { getUserFromCookie, saveUserToCookie, removeUserFromCookie } from '../utils/cookies';
+import {
+  getUserFromCookie,
+  saveUserToCookie,
+  removeUserFromCookie,
+} from '../utils/cookies';
 
 let store: Store | null = null;
 
@@ -18,7 +22,7 @@ export const getUser = async (): Promise<User | null> => {
   console.log('userStore: getUser called');
   const storeInstance = await initializeStore();
   const user = await storeInstance.get<User>('user');
-  
+
   if (!user) {
     console.log('userStore: No user in store, checking cookies');
     const cookieUser = getUserFromCookie();
@@ -28,7 +32,7 @@ export const getUser = async (): Promise<User | null> => {
       return cookieUser;
     }
   }
-  
+
   console.log('userStore: getUser result:', user);
   return user || null;
 };
