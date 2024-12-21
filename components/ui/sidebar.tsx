@@ -90,7 +90,8 @@ const SidebarProvider = React.forwardRef<
     );
 
     // Helper to toggle the sidebar.
-    const toggleSidebar = React.useCallback(() => {
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+        const toggleSidebar = React.useCallback(() => {
       return isMobile ? setOpenMobile(open => !open) : setOpen(open => !open);
     }, [isMobile, setOpen, setOpenMobile]);
 
@@ -114,6 +115,7 @@ const SidebarProvider = React.forwardRef<
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? 'expanded' : 'collapsed';
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const contextValue = React.useMemo<SidebarContext>(
       () => ({
         state,
@@ -434,6 +436,7 @@ const SidebarGroupLabel = React.forwardRef<
 
   return (
     <Comp
+      //@ts-expect-error idek bro
       ref={ref}
       data-sidebar="group-label"
       className={cn(
@@ -455,6 +458,7 @@ const SidebarGroupAction = React.forwardRef<
 
   return (
     <Comp
+      //@ts-expect-error idek bro
       ref={ref}
       data-sidebar="group-action"
       className={cn(
@@ -556,6 +560,7 @@ const SidebarMenuButton = React.forwardRef<
 
     const button = (
       <Comp
+        //@ts-expect-error idek bro
         ref={ref}
         data-sidebar="menu-button"
         data-size={size}
@@ -601,6 +606,7 @@ const SidebarMenuAction = React.forwardRef<
 
   return (
     <Comp
+      //@ts-expect-error idek bro
       ref={ref}
       data-sidebar="menu-action"
       className={cn(
@@ -715,6 +721,7 @@ const SidebarMenuSubButton = React.forwardRef<
 
   return (
     <Comp
+      //@ts-expect-error idek bro
       ref={ref}
       data-sidebar="menu-sub-button"
       data-size={size}

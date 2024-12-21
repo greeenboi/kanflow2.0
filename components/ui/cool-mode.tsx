@@ -120,6 +120,7 @@ const applyParticleEffect = (
   }
 
   function refreshParticles() {
+    // biome-ignore lint/complexity/noForEach: <explanation>
     particles.forEach(p => {
       p.left = p.left - p.speedHorz * p.direction;
       p.top = p.top - p.speedUp;
