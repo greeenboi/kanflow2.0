@@ -30,6 +30,7 @@ tauri-plugin-deep-link = "2"
 webbrowser = "1.0.3"
 tauri-plugin-sql = { version = "2", features = ["sqlite"] }
 tauri-plugin-store = "2"
+tauri-plugin-devtools = "2.0.0"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }

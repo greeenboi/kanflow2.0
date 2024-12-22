@@ -78,6 +78,8 @@ pub fn run() {
             kind: MigrationKind::Up,
         },
     ];
+    
+    let devtools = tauri_plugin_devtools::init(); 
 
     let log_plugin = if cfg!(debug_assertions) {
         tauri_plugin_log::Builder::default()
@@ -92,6 +94,7 @@ pub fn run() {
     };
 
     tauri::Builder::default()
+        .plugin(devtools)
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_sql::Builder::new().add_migrations("sqlite:kanflow.db", migrations).build())
         .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
