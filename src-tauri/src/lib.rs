@@ -1,3 +1,9 @@
+use tauri::{
+    menu::{Menu, MenuItem},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    Emitter,
+    Manager, // Add this import
+};
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 use tauri_plugin_sql::{Migration, MigrationKind};
 mod commands;
@@ -78,22 +84,68 @@ pub fn run() {
             kind: MigrationKind::Up,
         },
     ];
-    
-    let devtools = tauri_plugin_devtools::init(); 
 
-    let log_plugin = if cfg!(debug_assertions) {
-        tauri_plugin_log::Builder::default()
-            .level(log::LevelFilter::Info)
-            .build()
-    } else {
-        tauri_plugin_log::Builder::new()
-            .target(tauri_plugin_log::Target::new(
-                tauri_plugin_log::TargetKind::Stdout,
-            ))
-            .build()
-    };
+    let devtools = tauri_plugin_devtools::init();
+
+    // let log_plugin = if cfg!(debug_assertions) {
+    //     tauri_plugin_log::Builder::default()
+    //         .level(log::LevelFilter::Info)
+    //         .build()
+    // } else {
+    //     tauri_plugin_log::Builder::new()
+    //         .target(tauri_plugin_log::Target::new(
+    //             tauri_plugin_log::TargetKind::Stdout,
+    //         ))
+    //         .build()
+    // };
 
     tauri::Builder::default()
+    .plugin(tauri_plugin_persisted_scope::init())
+    .setup(|app| {
+        let open_app = MenuItem::with_id(app, "open_app", "Open App", true, None::<&str>)?;
+        let create_board = MenuItem::with_id(app, "create_board", "Create New Board", true, None::<&str>)?;
+        let create_task = MenuItem::with_id(app, "create_task", "Create New Task", true, None::<&str>)?;
+        let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+        let menu = Menu::with_items(app, &[&open_app, &create_board, &create_task, &quit_i])?;
+
+        let tray = TrayIconBuilder::new()
+            .icon(app.default_window_icon().unwrap().clone())
+            .menu(&menu)
+            .on_tray_icon_event(|tray, event| match event {
+                TrayIconEvent::Click {
+                    button: MouseButton::Left,
+                    button_state: MouseButtonState::Up,
+                    ..
+                } => {
+                    println!("left click pressed and released");
+                    // Show and focus the main window
+                    let app_handle = tray.app_handle();
+                    if let Some(window) = app_handle.get_webview_window("main") {
+                        let _ = window.show();
+                        let _ = window.set_focus();
+                    }
+                }
+                TrayIconEvent::DoubleClick {
+                    button: MouseButton::Left,
+                    ..
+                } => {
+                    println!("Tray icon double clicked");
+                    // Show and focus the main window instead of emitting "open_tasks"
+                    let app_handle = tray.app_handle();
+                    if let Some(window) = app_handle.get_webview_window("main") {
+                        let _ = window.show();
+                        let _ = window.set_focus();
+                    }
+                }
+                _ => {
+                    println!("unhandled event: {:?}", event);
+                }
+            })
+            .menu_on_left_click(true)
+            .build(app)?;
+
+        Ok(())
+    })
         .plugin(devtools)
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_sql::Builder::new().add_migrations("sqlite:kanflow.db", migrations).build())
@@ -112,8 +164,12 @@ pub fn run() {
         })
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
-        .plugin(log_plugin)
-        .invoke_handler(tauri::generate_handler![commands::open_link_on_click])
+        .invoke_handler(tauri::generate_handler![
+            commands::open_link_on_click,
+            commands::open_app,
+            commands::create_new_board,
+            commands::create_new_task
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
