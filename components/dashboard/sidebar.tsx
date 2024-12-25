@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { LayoutDashboard, KanbanSquare, Search } from 'lucide-react';
+import { LayoutDashboard, KanbanSquare, Search, Settings } from 'lucide-react';
 import { getUserBoards } from '@/actions/dashboard/kanban/boards';
 import type { Board } from '@/actions/dashboard/kanban/boards';
 import { useUser } from '@/context/UserContext';
@@ -33,6 +33,11 @@ const sidebarNavItems = [
     href: '/dashboard',
     icon: LayoutDashboard,
   },
+  {
+    title: 'Settings',
+    href: '/dashboard/settings',
+    icon: Settings,
+  }
 ];
 
 export function Sidebar() {
@@ -110,7 +115,7 @@ export function Sidebar() {
               return (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
-                    variant={pathname === item.href ? 'default' : 'outline'}
+                    variant="default"
                     asChild
                   >
                     <Link
