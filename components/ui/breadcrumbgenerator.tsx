@@ -13,12 +13,26 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Home } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import { ChevronDownIcon } from 'lucide-react';
 
 const formatLabel = (segment: string): string => {
   return segment
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+};
+
+const parallelPaths: Record<string, { label: string; href: string }[]> = {
+  dashboard: [
+    { label: 'Learn More', href: '/learnmore' },
+    { label: 'Dashboard', href: '/dashboard' },
+  ],
 };
 
 export function BreadcrumbComponent() {
@@ -51,7 +65,21 @@ export function BreadcrumbComponent() {
           <React.Fragment key={index}>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              {item.href ? (
+              {index === 0 && parallelPaths[item.label.toLowerCase()] ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1">
+                    {item.label}
+                    <ChevronDownIcon />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {parallelPaths[item.label.toLowerCase()].map((menuItem, idx) => (
+                      <DropdownMenuItem key={idx} asChild>
+                        <a href={menuItem.href}>{menuItem.label}</a>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : item.href ? (
                 <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
               ) : (
                 <BreadcrumbPage>{item.label}</BreadcrumbPage>
