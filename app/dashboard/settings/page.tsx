@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
 import GeneralSettings from '@/components/settings/general-settings'
 import AccountSettings from '@/components/settings/account-settings'
 import DeviceSettings from '@/components/settings/device-settings'
@@ -14,6 +13,7 @@ import ApplicationSettings from '@/components/settings/application-settings'
 import NotificationSettings from '@/components/settings/notification-settings'
 import StorageSettings from '@/components/settings/storage-settings'
 import PlanSettings from '@/components/settings/plan-settings'
+import { toast } from 'sonner'
 
 
 export default function SettingsPage() {
@@ -21,9 +21,15 @@ export default function SettingsPage() {
   const activeTabParam = searchParams.get('tab') ?? 'general'
   const [activeTab, setActiveTab] = useState(activeTabParam)
 
+  const Router = useRouter();
+
   const handleSave = () => {
     toast.success("Settings saved", {
       description: "Your settings have been saved successfully.",
+      action: {
+        label: "Go back",
+        onClick: () => Router.back(),
+      },
     })
   }
 

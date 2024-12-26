@@ -7,6 +7,7 @@ import {
 import { Button } from './button';
 
 const shortcuts = [
+  { keys: ['Ctrl', 'K'], description: 'Command Menu' },
   { keys: ['Ctrl', 'S'], description: 'Save changes' },
   { keys: ['Ctrl', 'N'], description: 'New task' },
   { keys: ['Ctrl', 'Shift', 'N'], description: 'New board' },

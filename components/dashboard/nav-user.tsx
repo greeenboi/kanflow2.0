@@ -32,6 +32,7 @@ import type { User } from '@/lib/db/actions';
 import { useLogout } from '@/context/UserContext';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 export function NavUser({
   user,
@@ -40,6 +41,8 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const logoutUser = useLogout();
+
+  const Router = useRouter();
 
   const handleComingSoon = () => {
     toast.custom(t => (
@@ -127,14 +130,14 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={handleComingSoon}>
+              <DropdownMenuItem onClick={() => Router.push('/dashboard/settings?tab=plans')}>
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={handleComingSoon}>
+              <DropdownMenuItem onClick={() => Router.push('/dashboard/settings?tab=account')}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
@@ -142,7 +145,7 @@ export function NavUser({
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleComingSoon}>
+              <DropdownMenuItem onClick={() => Router.push('/dashboard/settings?tab=notifications')}>
                 <Bell />
                 Notifications
               </DropdownMenuItem>
