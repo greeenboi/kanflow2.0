@@ -10,7 +10,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
@@ -41,7 +40,6 @@ import {
   PlusCircle,
   Trash2,
 } from 'lucide-react';
-import { format } from 'date-fns';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -60,6 +58,8 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { PopoverPortal } from '@radix-ui/react-popover';
+import { useState } from 'react';
+import { LabelSelector } from './label-selector';
 
 const timeOptions = Array.from({ length: 49 }, (_, i) => {
   const hours = Math.floor(i / 2);
@@ -85,7 +85,10 @@ const taskFormSchema = z.object({
       })
     )
     .optional(),
+  labels: z.array(z.string()).optional(),
 });
+
+
 
 interface TaskDialogProps {
   open: boolean;
@@ -111,7 +114,14 @@ export function TaskDialog({
       markdown_content: task?.markdown_content || '',
       time_to_complete: task?.time_to_complete || '',
       checklist: task?.checklist ? JSON.parse(task.checklist) : [],
+      labels: task?.labels || [],
     },
+  });
+
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    labels: [] as string[],
   });
 
   async function onSubmit(data: z.infer<typeof taskFormSchema>) {
@@ -120,6 +130,7 @@ export function TaskDialog({
       estimated_time: data.estimated_time
         ? Number.parseFloat(data.estimated_time)
         : undefined,
+      labels: newTask.labels,
     };
     await onSave(formData);
     form.reset();
@@ -472,6 +483,17 @@ export function TaskDialog({
                     </FormControl>
                     <FormMessage />
                   </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="labels"
+                render={({ field }) => (
+                  <LabelSelector
+                    selectedLabels={field.value || []}
+                    onLabelsChange={(newLabels) => field.onChange(newLabels)}
+                  />
                 )}
               />
             </div>

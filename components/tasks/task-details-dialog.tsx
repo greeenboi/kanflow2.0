@@ -87,7 +87,7 @@ export function TaskDetailsDialog({
   const [editValues, setEditValues] = useState<{
     checklist: { text: string; checked: boolean; }[];
     labels: string[];
-    attachments: string[];
+    attachments: number[]; // Change to number[]
     description: string;
     markdown_content?: string;
   }>({
@@ -143,8 +143,8 @@ export function TaskDetailsDialog({
       const checklist = task.checklist ? JSON.parse(task.checklist) : [];
       setEditValues({
         checklist,
-        labels: task.labels ? task.labels.split(',') : [],
-        attachments: task.attachments ? JSON.parse(task.attachments) : [],
+        labels: task.labels || [],
+        attachments: task.attachments || [],
         description: task.description || '',
         markdown_content: task.markdown_content,
       });
@@ -183,8 +183,8 @@ export function TaskDetailsDialog({
   };
 
   const checklist = task.checklist ? JSON.parse(task.checklist) : [];
-  const labels = task.labels ? task.labels.split(',') : [];
-  const attachments = task.attachments ? JSON.parse(task.attachments) : [];
+  const labels = task.labels || [];
+  const attachments = task.attachments || [];
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const handleUpdate = async (field: string, value: any) => {
@@ -192,10 +192,8 @@ export function TaskDetailsDialog({
 
     try {
       let updateValue = value;
-      if (field === 'checklist' || field === 'attachments') {
+      if (field === 'checklist' || field === 'attachments' || field === 'labels') {
         updateValue = JSON.stringify(value);
-      } else if (field === 'labels') {
-        updateValue = value.join(',');
       }
 
       await updateTask(task.id, { [field]: updateValue });
@@ -548,7 +546,7 @@ export function TaskDetailsDialog({
                     selectedLabels={editValues.labels}
                     onLabelsChange={(newLabels) => {
                       setEditValues({ ...editValues, labels: newLabels });
-                      handleUpdate('labels', newLabels.join(','));
+                      handleUpdate('labels', newLabels);
                     }}
                   />
                 </AccordionContent>
@@ -562,10 +560,10 @@ export function TaskDetailsDialog({
                 <AccordionContent>
                   {attachments.length > 0 ? (
                     <ul className="list-disc list-inside">
-                      {attachments.map((attachment: string, index: number) => (
+                      {attachments.map((attachmentId: number, index: number) => (
                         <li key={index} className="flex items-center gap-2">
                           <Paperclip className="h-4 w-4" />
-                          <span className="text-sm">{attachment}</span>
+                          <span className="text-sm">Attachment #{attachmentId}</span>
                         </li>
                       ))}
                     </ul>

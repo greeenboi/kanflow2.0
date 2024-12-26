@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Plus } from "lucide-react";
+import { Cross, Delete, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const presetLabels = [
@@ -32,7 +32,7 @@ const presetLabels = [
 
 interface LabelSelectorProps {
   selectedLabels: string[];
-  onLabelsChange: (labels: string[]) => void;
+  onLabelsChange: (newLabels: string[]) => void;
 }
 
 export function LabelSelector({ selectedLabels, onLabelsChange }: LabelSelectorProps) {
@@ -60,11 +60,17 @@ export function LabelSelector({ selectedLabels, onLabelsChange }: LabelSelectorP
   };
 
   const LabelList = () => (
-    <Command>
+    <Command >
       <CommandInput 
         placeholder="Type to search or create..." 
         value={inputValue}
         onValueChange={setInputValue}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && inputValue) {
+            handleCreateLabel(inputValue);
+            e.preventDefault();
+          }
+        }}
       />
       <CommandList>
         <CommandEmpty>
@@ -101,15 +107,15 @@ export function LabelSelector({ selectedLabels, onLabelsChange }: LabelSelectorP
                 <Badge
                     key={label}
                     variant="secondary"
-                    className="cursor-pointer"
+                    className="cursor-pointer flex gap-1"
                     onClick={() => handleRemoveLabel(label)}
                 >
                     {label}
-                    <span className="ml-1">×</span>
+                    <Delete className="w-4 h-4 "/>
                 </Badge>
                 ))}
             </div>
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={open} onOpenChange={setOpen} >
                 <PopoverTrigger asChild>
                 <Button variant="outline" size="sm">
                     <Plus className="mr-2 h-4 w-4" />

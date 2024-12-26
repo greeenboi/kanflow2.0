@@ -8,6 +8,7 @@ export interface TaskFormData {
   estimated_time?: number;
   markdown_content?: string;
   time_to_complete?: string;
+  labels?: string[];
   checklist?: Array<{ text: string; checked: boolean }>;
 }
 

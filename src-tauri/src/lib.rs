@@ -83,6 +83,96 @@ pub fn run() {
             ",
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 4,
+            description: "Create comments table and attachments table",
+            sql: "
+                CREATE TABLE comments (
+                    id INTEGER PRIMARY KEY,
+                    task_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
+                    content TEXT NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    parent_comment_id INTEGER,
+                    FOREIGN KEY (task_id) REFERENCES tasks(id),
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (parent_comment_id) REFERENCES comments(id)
+                );
+
+                CREATE TABLE attachments (
+                    id INTEGER PRIMARY KEY,
+                    task_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
+                    file_name TEXT NOT NULL,
+                    file_path TEXT NOT NULL,
+                    file_size INTEGER NOT NULL,
+                    file_type TEXT NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (task_id) REFERENCES tasks(id),
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                );
+
+                -- Modify tasks table to store labels as JSON array
+                -- We can't directly modify column type in SQLite, so we need to:
+                -- 1. Create a backup of tasks
+                -- 2. Drop the original table
+                -- 3. Create a new table with the correct schema
+                -- 4. Copy the data back
+
+                CREATE TABLE tasks_backup AS SELECT * FROM tasks;
+
+                DROP TABLE tasks;
+
+                CREATE TABLE tasks (
+                    id INTEGER PRIMARY KEY,
+                    board_id INTEGER NOT NULL,
+                    title TEXT NOT NULL,
+                    description TEXT,
+                    assigned_to INTEGER,
+                    markdown_content TEXT,
+                    time_to_complete TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    due_date DATE,
+                    priority TEXT DEFAULT 'medium',
+                    status TEXT DEFAULT 'todo',
+                    labels JSON, -- Changed to JSON type to store array
+                    comments_enabled BOOLEAN DEFAULT TRUE,
+                    attachments JSON, -- Changed to JSON type to store array of attachment IDs
+                    checklist TEXT,
+                    parent_task_id INTEGER,
+                    estimated_time INTEGER,
+                    actual_time INTEGER,
+                    order_num INTEGER,
+                    column_id INTEGER,
+                    CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
+                    CHECK (status IN ('todo', 'in_progress', 'done', 'blocked', 'archived'))
+                );
+
+                -- Copy data back, converting labels to JSON array
+                INSERT INTO tasks 
+                SELECT 
+                    id, board_id, title, description, assigned_to,
+                    markdown_content, time_to_complete, created_at, last_updated,
+                    due_date, priority, status,
+                    CASE 
+                        WHEN labels IS NULL THEN '[]'
+                        ELSE json_array(labels) 
+                    END as labels,
+                    comments_enabled,
+                    CASE 
+                        WHEN attachments IS NULL THEN '[]'
+                        ELSE json_array(attachments)
+                    END as attachments,
+                    checklist, parent_task_id, estimated_time, actual_time,
+                    order_num, column_id
+                FROM tasks_backup;
+
+                DROP TABLE tasks_backup;
+            ",
+            kind: MigrationKind::Up,
+        },
     ];
 
     let devtools = tauri_plugin_devtools::init();
