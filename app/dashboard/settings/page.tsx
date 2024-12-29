@@ -11,7 +11,7 @@ import AccountSettings from '@/components/settings/account-settings'
 import DeviceSettings from '@/components/settings/device-settings'
 import ApplicationSettings from '@/components/settings/application-settings'
 import NotificationSettings from '@/components/settings/notification-settings'
-import StorageSettings from '@/components/settings/storage-settings'
+// import StorageSettings from '@/components/settings/storage-settings'
 import PlanSettings from '@/components/settings/plan-settings'
 import { toast } from 'sonner'
 
@@ -49,7 +49,7 @@ export default function SettingsPage() {
                 <TabsTrigger value="device">Device</TabsTrigger>
                 <TabsTrigger value="application">Application</TabsTrigger>
                 <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                <TabsTrigger value="storage">Storage</TabsTrigger>
+                {/* <TabsTrigger value="storage">Storage</TabsTrigger> */}
                 <TabsTrigger value="plans">Plans</TabsTrigger>
               </TabsList>
             </ScrollArea>
@@ -69,9 +69,9 @@ export default function SettingsPage() {
               <TabsContent value="notifications">
                 <NotificationSettings />
               </TabsContent>
-              <TabsContent value="storage">
+              {/* <TabsContent value="storage">
                 <StorageSettings />
-              </TabsContent>
+              </TabsContent> */}
               <TabsContent value="plans">
                 <PlanSettings />
               </TabsContent>
