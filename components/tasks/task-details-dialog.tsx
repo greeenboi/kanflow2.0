@@ -18,7 +18,7 @@ import {
   PlusCircle,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import type { Task } from '@/actions/dashboard/kanban/tasks';
+import type { Comment, Task } from '@/actions/dashboard/kanban/tasks';
 import { Separator } from '@/components/ui/separator';
 import {
   Accordion,
@@ -43,15 +43,17 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ListTodo, FileText, FileCode } from 'lucide-react';
 import { type Board, getBoardById } from '@/actions/dashboard/kanban/boards';
-import { use, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Check, X, Plus } from 'lucide-react';
-import { updateTask } from '@/actions/dashboard/kanban/tasks';
+import { Pencil, Check, X } from 'lucide-react';
+import { updateTask, getTaskComments, addComment } from '@/actions/dashboard/kanban/tasks';
 import { LabelSelector } from './label-selector';
+import { getUser } from '@/lib/store/userStore';
+import type { User as UserType } from '@/lib/db/actions';
+import { getUserById } from '@/lib/db/actions';
 
-// Add these types near the top of the file
 type ColumnId = 1 | 2 | 3;
 type ColumnInfo = {
   name: string;
@@ -66,6 +68,10 @@ interface TaskDetailsDialogProps {
   onOpenChange: (open: boolean) => void;
   task: Task | null;
 }
+
+type CommentWithUserName = Comment & {
+  user_name?: string;
+};
 
 function EmptyState({ message }: { message: string }) {
   return (
@@ -87,7 +93,7 @@ export function TaskDetailsDialog({
   const [editValues, setEditValues] = useState<{
     checklist: { text: string; checked: boolean; }[];
     labels: string[];
-    attachments: number[]; // Change to number[]
+    attachments: number[]; 
     description: string;
     markdown_content?: string;
   }>({
@@ -103,6 +109,9 @@ export function TaskDetailsDialog({
     total: 0,
     percentage: 0,
   });
+
+  const [comments, setComments] = useState<CommentWithUserName[]>([]);
+  const [newCommentText, setNewCommentText] = useState('');
 
   // Add this function to calculate checklist progress
   const updateChecklistProgress = useCallback((checklist: { checked: boolean }[]) => {
@@ -152,6 +161,27 @@ export function TaskDetailsDialog({
     }
   }, [task, updateChecklistProgress]);
 
+  useEffect(() => {
+    async function loadComments() {
+      if (task) {
+        const fetchedComments = await getTaskComments(task.id);
+        const withUserNames = await Promise.all(
+          fetchedComments.map(async (comment) => {
+            const userData = await getUserById(comment.user_id);
+            return {
+              ...comment,
+              user_name: userData ? userData.name : 'Unknown user',
+            };
+          })
+        );
+        setComments(withUserNames);
+      }
+    }
+    if (open && task) {
+      loadComments();
+    }
+  }, [open, task]);
+
   if (!task) return null;
 
   const columnNames: ColumnMap = {
@@ -182,7 +212,6 @@ export function TaskDetailsDialog({
     archived: 'bg-gray-100 text-gray-800',
   };
 
-  const checklist = task.checklist ? JSON.parse(task.checklist) : [];
   const labels = task.labels || [];
   const attachments = task.attachments || [];
 
@@ -204,6 +233,23 @@ export function TaskDetailsDialog({
       console.error(error);
     }
   };
+
+  async function handleAddComment() {
+    const user = await getUser();
+    if (!task || !newCommentText.trim() || !user?.id) return;
+    try {
+      await addComment({
+        task_id: task.id,
+        user_id: user.id,
+        content: newCommentText,
+      });
+      setNewCommentText('');
+      const updatedComments = await getTaskComments(task.id);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+    }
+  }
 
   // Add these helper components
   const EditableField = ({ 
@@ -583,7 +629,28 @@ export function TaskDetailsDialog({
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <EmptyState message="Comments are enabled but none have been added yet." />
+                  {comments.length === 0 ? (
+                    <EmptyState message="No comments added yet." />
+                  ) : (
+                    <div className="space-y-3">
+                      {comments.map((comment) => (
+                        <div key={comment.id} className="p-2 border rounded">
+                          <p className="text-sm mb-1">{comment.content}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Posted by {comment.user_name} on {comment.created_at}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-3 flex items-center gap-2">
+                    <Input
+                      value={newCommentText}
+                      onChange={(e) => setNewCommentText(e.target.value)}
+                      placeholder="Add a comment..."
+                    />
+                    <Button onClick={handleAddComment}>Post</Button>
+                  </div>
                 </CardContent>
               </Card>
             )}
