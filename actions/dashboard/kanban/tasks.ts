@@ -266,3 +266,9 @@ export async function getTaskAttachments(taskId: number): Promise<Attachment[]> 
     [taskId]
   );
 }
+
+export async function deleteTaskAndComments(taskId: number): Promise<void> {
+  const db = await Database.load('sqlite:kanflow.db');
+  await db.execute('DELETE FROM comments WHERE task_id = ?', [taskId]);
+  await db.execute('DELETE FROM tasks WHERE id = ?', [taskId]);
+}

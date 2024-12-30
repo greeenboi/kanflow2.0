@@ -48,7 +48,7 @@ import { toast } from 'sonner';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, X } from 'lucide-react';
-import { updateTask, getTaskComments, addComment } from '@/actions/dashboard/kanban/tasks';
+import { updateTask, getTaskComments, addComment, deleteTaskAndComments } from '@/actions/dashboard/kanban/tasks';
 import { LabelSelector } from './label-selector';
 import { getUser } from '@/lib/store/userStore';
 import type { User as UserType } from '@/lib/db/actions';
@@ -248,6 +248,17 @@ export function TaskDetailsDialog({
       setComments(updatedComments);
     } catch (error) {
       console.error('Failed to add comment:', error);
+    }
+  }
+
+  async function handleDeleteTask() {
+    if (!task) return;
+    try {
+      await deleteTaskAndComments(task.id);
+      onOpenChange(false);
+      // Optionally show toast or refresh data
+    } catch (error) {
+      console.error('Failed to delete task', error);
     }
   }
 
@@ -680,6 +691,9 @@ export function TaskDetailsDialog({
             )}
           </div>
         </ScrollArea>
+        <Button variant="destructive" onClick={handleDeleteTask}>
+          Delete Task
+        </Button>
       </DialogContent>
     </Dialog>
   );
