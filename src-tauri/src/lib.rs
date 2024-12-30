@@ -190,6 +190,7 @@ pub fn run() {
     // };
 
     tauri::Builder::default()
+    .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--flag1", "--flag2"])))
     .plugin(tauri_plugin_os::init())
     .plugin(tauri_plugin_persisted_scope::init())
