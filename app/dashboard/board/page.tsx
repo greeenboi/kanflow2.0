@@ -13,6 +13,7 @@ import {
   type Task,
   type TaskStatus,
   createTask,
+  updateTask,
 } from '@/actions/dashboard/kanban/tasks';
 import type { TaskFormData } from '@/types/kanban';
 import { KanbanCard } from '@/components/kanban/card';
@@ -143,7 +144,10 @@ export default function BoardPage() {
   const handleTaskSave = async (taskData: TaskFormData) => {
     try {
       if (selectedTask) {
-        // Handle update logic coming soon
+        await updateTask(selectedTask.id, {
+          // ...existing code...
+          labels: taskData.labels || [],
+        });
       } else {
         const newTaskId = await createTask({
           board_id: boardId,
@@ -152,6 +156,7 @@ export default function BoardPage() {
           column_id: 1, // Start in todo column
           priority: taskData.priority,
           due_date: taskData.due_date?.toISOString(),
+          labels: taskData.labels,
         });
 
         // Create the new task object
@@ -162,6 +167,7 @@ export default function BoardPage() {
           description: taskData.description || '',
           priority: taskData.priority || 'medium',
           status: 'todo',
+          labels: taskData.labels || [],
           due_date: taskData.due_date?.toISOString(),
           created_at: new Date().toISOString(),
           last_updated: new Date().toISOString(),

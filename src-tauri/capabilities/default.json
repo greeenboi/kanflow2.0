@@ -2,7 +2,9 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "enables the default permissions",
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:default",
     "log:default",
@@ -11,6 +13,12 @@
     "deep-link:default",
     "sql:default",
     "sql:allow-execute",
-    "store:default"
+    "store:default",
+    "os:default",
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "https://version-checker-api.suvan-gowrishanker-204.workers.dev" }],
+      "deny": [{ "url": "https://private.tauri.app" }]
+    }
   ]
 }

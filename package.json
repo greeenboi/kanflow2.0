@@ -1,6 +1,6 @@
 {
   "name": "kanflow",
-  "version": "0.2.0",
+  "version": "0.2.11",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@octokit/rest": "^21.0.2",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -40,9 +41,12 @@
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.6",
+    "@tauri-apps/plugin-autostart": "~2",
     "@tauri-apps/plugin-deep-link": "~2",
     "@tauri-apps/plugin-fs": "~2",
+    "@tauri-apps/plugin-http": "~2",
     "@tauri-apps/plugin-log": "~2",
+    "@tauri-apps/plugin-os": "~2",
     "@tauri-apps/plugin-shell": "~2",
     "@tauri-apps/plugin-sql": "~2",
     "@tauri-apps/plugin-store": "~2",
@@ -81,7 +85,7 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2",
-    "vaul": "^0.9.9",
+    "vaul": "^1.1.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, RefreshCw } from 'lucide-react';
 import { CreateBoardDialog } from '@/components/dashboard/create-board-dialog';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -25,6 +25,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<TaskStats | null>(null);
   const [recentTasks, setRecentTasks] = useState<RecentTask[]>([]);
   const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
 
   useHotkeys(
     'ctrl+shift+n',
@@ -36,11 +37,17 @@ export default function DashboardPage() {
   );
 
   const fetchData = useCallback(async () => {
-    const stats = await getTaskStats(1);
-    const recentTasks = await getRecentTasks(1);
-    setStats(stats);
-    setRecentTasks(recentTasks);
+    setIsRefetching(true);
+    try {
+      const stats = await getTaskStats(1);
+      const recentTasks = await getRecentTasks(1);
+      setStats(stats);
+      setRecentTasks(recentTasks);
+    } finally {
+      setIsRefetching(false);
+    }
   }, []);
+  
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -65,6 +72,9 @@ export default function DashboardPage() {
               New Board
             </Button>
           </CreateBoardDialog>
+          <Button variant='ghost' onClick={fetchData} disabled={isRefetching}>
+            <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
       </DashboardHeader>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

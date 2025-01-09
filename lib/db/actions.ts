@@ -67,3 +67,25 @@ export async function getUserByUsername(
   const results = await db.select<User[]>(sql, [username]);
   return results.length ? results[0] : null;
 }
+
+export async function updateUser(userData: User): Promise<void> {
+  const db = await Database.load('sqlite:kanflow.db');
+  const sql = `
+    UPDATE users
+    SET username = ?, name = ?, first_name = ?, last_name = ?, email = ?
+    WHERE id = ?
+  `;
+  const params = [
+    userData.username,
+    // Do not update password
+    userData.name,
+    userData.first_name || null,
+    userData.last_name || null,
+    userData.email,
+    userData.id,
+  ];
+  const res = await db.execute(sql, params);
+  if (!res) {
+    throw new Error('Failed to update user');
+  }
+}
