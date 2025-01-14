@@ -23,6 +23,8 @@ It also offers several exciting features:
 - Completely customizable boards and tasks.
 - and more..
 
+> Note: All your data including your login information is stored and encrypted locally on your device. No cloud / data-server used at all. 🤝
+
 ## Gallery
 ![image](https://github.com/user-attachments/assets/06bf4b2d-ede4-4913-8b87-82f6a2a7c7e5)
 
