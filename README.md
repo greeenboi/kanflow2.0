@@ -1,3 +1,5 @@
+![kanflow-banner](https://github.com/user-attachments/assets/03bacf21-aa95-440e-a4ab-c5f1e81c5a6c)
+
 # KanFlow
 
 KanFlow is a modern desktop application built with Next.js and Tauri, combining web technologies with native performance to deliver a seamless user experience.
@@ -22,12 +24,18 @@ It also offers several exciting features:
 - and more..
 
 ## Gallery
-![Screenshot 2024-12-22 004444](https://github.com/user-attachments/assets/77cc5d0f-f730-4210-8062-3e85fd9e4ac6)
-![Screenshot 2024-12-22 004450](https://github.com/user-attachments/assets/9841b392-7954-4daa-be9c-edaceb02e1c8)
-![Screenshot 2024-12-22 004842](https://github.com/user-attachments/assets/1a6fa874-8d4f-4aa6-9c7e-b5666196e64d)
-![Screenshot 2024-12-22 004851](https://github.com/user-attachments/assets/73132ef8-77fb-4830-8221-565cda77b15c)
-![Screenshot 2024-12-22 004906](https://github.com/user-attachments/assets/c36b605a-cb84-4b0c-8b79-3664ae933923)
-![Screenshot 2024-12-22 005014](https://github.com/user-attachments/assets/034cca3d-4c19-4ff7-804c-0a84e18c6fab)
+![image](https://github.com/user-attachments/assets/06bf4b2d-ede4-4913-8b87-82f6a2a7c7e5)
+
+
+![image](https://github.com/user-attachments/assets/5913dad9-f23a-4755-994b-499f98cdeb29)
+
+![image](https://github.com/user-attachments/assets/b18d596a-35ec-4485-bf66-ac54c1130c1b)
+
+![image](https://github.com/user-attachments/assets/51bb71f5-e30e-44e7-8aad-a8488491adc8)
+
+![image](https://github.com/user-attachments/assets/1a16b36b-e7de-4ba7-a955-4f4ab6c8c5b3)
+
+
 
 ## What We Used
 
