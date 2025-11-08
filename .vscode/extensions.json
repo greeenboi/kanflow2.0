@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "pandy.bun",
+    "biomejs.biome",
+    "oven.bun-vscode",
+    "dsznajder.es7-react-js-snippets",
+    "alexcvzz.vscode-sqlite",
+    "qwtel.sqlite-viewer",
+    "mtxr.sqltools",
+    "bradlc.vscode-tailwindcss",
+    "tauri-apps.tauri-vscode"
+  ]
+}
