@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function NotificationSettings() {
   return (
@@ -6,10 +12,11 @@ export default function NotificationSettings() {
       <div className="text-center">
         <CardHeader>
           <CardTitle>Coming Soon</CardTitle>
-          <CardDescription>Notification settings will be available in a future update.</CardDescription>
+          <CardDescription>
+            Notification settings will be available in a future update.
+          </CardDescription>
         </CardHeader>
       </div>
     </Card>
-  )
+  );
 }
-

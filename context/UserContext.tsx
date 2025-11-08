@@ -1,10 +1,10 @@
 'use client';
-import type React from 'react';
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { getUser, updateUser, logout } from '@/lib/store/userStore';
-import type { User } from '@/lib/db/actions';
 import { RefreshCcw } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import type React from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { User } from '@/lib/db/actions';
+import { getUser, logout, updateUser } from '@/lib/store/userStore';
 
 // Route configuration
 const PROTECTED_ROUTES = ['/dashboard', '/dashboard/board'];

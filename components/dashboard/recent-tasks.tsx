@@ -1,8 +1,8 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import type { RecentTask } from '@/actions/dashboard/kanban/tasks';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const statusColors = {
   todo: 'bg-gray-100 text-gray-800',

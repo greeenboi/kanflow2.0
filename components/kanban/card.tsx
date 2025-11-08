@@ -1,10 +1,10 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Clock, CheckSquare } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { CalendarDays, CheckSquare, Clock } from 'lucide-react';
 import type { Task } from '@/actions/dashboard/kanban/tasks';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 
 interface ChecklistItem {
   checked: boolean;

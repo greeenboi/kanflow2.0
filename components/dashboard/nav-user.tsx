@@ -11,8 +11,8 @@ import {
   UserIcon,
   X,
 } from 'lucide-react';
-import { Toast } from '../ui/toast';
-
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,17 +28,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import type { User } from '@/lib/db/actions';
 import { useLogout } from '@/context/UserContext';
-import { toast } from 'sonner';
+import type { User } from '@/lib/db/actions';
 import { Button } from '../ui/button';
-import { useRouter } from 'next/navigation';
+import { Toast } from '../ui/toast';
 
-export function NavUser({
-  user,
-}: {
-  user: User;
-}) {
+export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
   const logoutUser = useLogout();
 
@@ -130,14 +125,18 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => Router.push('/dashboard/settings?tab=plans')}>
+              <DropdownMenuItem
+                onClick={() => Router.push('/dashboard/settings?tab=plans')}
+              >
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => Router.push('/dashboard/settings?tab=account')}>
+              <DropdownMenuItem
+                onClick={() => Router.push('/dashboard/settings?tab=account')}
+              >
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
@@ -145,7 +144,11 @@ export function NavUser({
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => Router.push('/dashboard/settings?tab=notifications')}>
+              <DropdownMenuItem
+                onClick={() =>
+                  Router.push('/dashboard/settings?tab=notifications')
+                }
+              >
                 <Bell />
                 Notifications
               </DropdownMenuItem>

@@ -1,7 +1,7 @@
-import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation';
-import { Button } from '@/components/ui/button';
 import { ArrowRight, Layout } from 'lucide-react';
 import Link from 'next/link';
+import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   return (

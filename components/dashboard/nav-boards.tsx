@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronRight, Plus, type LucideIcon } from 'lucide-react';
-
+import { ChevronRight, type LucideIcon, Plus } from 'lucide-react';
+import { useState } from 'react';
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,7 +16,6 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { CreateBoardDialog } from './create-board-dialog';
-import { useState } from 'react';
 
 export function NavMain({
   items,

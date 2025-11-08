@@ -1,8 +1,8 @@
+import bcrypt from 'bcryptjs';
+import { toast } from 'sonner';
 import { getUserByEmail, type User } from '@/lib/db/actions';
 import { updateUser } from '@/lib/store/userStore';
 import type { LoginCredentials } from '@/lib/types/login';
-import bcrypt from 'bcryptjs';
-import { toast } from 'sonner';
 import { saveUserToCookie } from '@/lib/utils/cookies';
 
 const loginUser = async ({ email, password, rememberMe }: LoginCredentials) => {

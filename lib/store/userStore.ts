@@ -2,8 +2,8 @@ import { load, type Store } from '@tauri-apps/plugin-store';
 import type { User } from '@/lib/db/actions';
 import {
   getUserFromCookie,
-  saveUserToCookie,
   removeUserFromCookie,
+  saveUserToCookie,
 } from '../utils/cookies';
 
 let store: Store | null = null;

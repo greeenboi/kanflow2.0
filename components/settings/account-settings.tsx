@@ -1,21 +1,34 @@
-import { useEffect, useState } from 'react'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Pencil, Check, X, CircleCheck, CircleAlert } from 'lucide-react'
-import type { User } from '@/lib/db/actions'
-import { userUpdateSchema, type UserUpdateValues } from '@/lib/validators/user'
-import { getUser, updateUser } from '@/lib/store/userStore'
-import { updateUser as updateUserDb } from '@/lib/db/actions'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, CircleAlert, CircleCheck, Pencil, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import type { User } from '@/lib/db/actions';
+import { updateUser as updateUserDb } from '@/lib/db/actions';
+import { getUser, updateUser } from '@/lib/store/userStore';
+import { type UserUpdateValues, userUpdateSchema } from '@/lib/validators/user';
 
 export default function AccountSettings() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [showAlert, setShowAlert] = useState<{ show: boolean; field?: string; error?: boolean; message?: string; }>({ show: false })
-  const [editingField, setEditingField] = useState<keyof UserUpdateValues | null>(null)
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState<{
+    show: boolean;
+    field?: string;
+    error?: boolean;
+    message?: string;
+  }>({ show: false });
+  const [editingField, setEditingField] = useState<
+    keyof UserUpdateValues | null
+  >(null);
 
   const form = useForm<UserUpdateValues>({
     resolver: zodResolver(userUpdateSchema),
@@ -26,52 +39,61 @@ export default function AccountSettings() {
       first_name: user?.first_name || '',
       last_name: user?.last_name || '',
     },
-  })
+  });
 
   useEffect(() => {
     const loadUser = async () => {
-      const userData = await getUser()
+      const userData = await getUser();
       if (userData) {
-        setUser(userData)
+        setUser(userData);
         form.reset({
           name: userData.name,
           email: userData.email,
           username: userData.username,
           first_name: userData.first_name || '',
           last_name: userData.last_name || '',
-        })
+        });
       }
-      setLoading(false)
-    }
-    loadUser()
-  }, [form])
+      setLoading(false);
+    };
+    loadUser();
+  }, [form]);
 
   const onSubmit = async (field: keyof UserUpdateValues) => {
-    if (!user) return
+    if (!user) return;
 
     try {
-      const value = form.getValues(field)
-      const updatedUser = { ...user, [field]: value }
-      await updateUser(updatedUser)
-      await updateUserDb(updatedUser)
-      setUser(updatedUser)
-      setShowAlert({ show: true, field: field, message: 'Updated successfully' })
-      setEditingField(null)
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      const value = form.getValues(field);
+      const updatedUser = { ...user, [field]: value };
+      await updateUser(updatedUser);
+      await updateUserDb(updatedUser);
+      setUser(updatedUser);
+      setShowAlert({
+        show: true,
+        field: field,
+        message: 'Updated successfully',
+      });
+      setEditingField(null);
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
-      console.error(error)
-      setShowAlert({ show: true, field: field, error: true, message: error.message })
+      console.error(error);
+      setShowAlert({
+        show: true,
+        field: field,
+        error: true,
+        message: error.message,
+      });
     }
     setTimeout(() => {
-      setShowAlert({ show: false })
-    }, 3000)
-  }
+      setShowAlert({ show: false });
+    }, 3000);
+  };
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div>Loading...</div>;
 
   const renderField = (field: keyof UserUpdateValues, label: string) => {
-    const isEditing = editingField === field
-    const value = form.getValues(field)
+    const isEditing = editingField === field;
+    const value = form.getValues(field);
 
     return (
       <div className="space-y-2">
@@ -87,19 +109,15 @@ export default function AccountSettings() {
             </Button>
           ) : (
             <div className="space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onSubmit(field)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => onSubmit(field)}>
                 <Check className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setEditingField(null)
-                  form.reset({ [field]: user?.[field] })
+                  setEditingField(null);
+                  form.reset({ [field]: user?.[field] });
                 }}
               >
                 <X className="h-4 w-4" />
@@ -122,8 +140,8 @@ export default function AccountSettings() {
           </p>
         )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <Card>
@@ -138,8 +156,8 @@ export default function AccountSettings() {
         {renderField('first_name', 'First Name')}
         {renderField('last_name', 'Last Name')}
 
-        {showAlert.show && (
-          showAlert.error ? (
+        {showAlert.show &&
+          (showAlert.error ? (
             <div className="rounded-lg border border-red-500/50 px-4 py-3 text-red-600">
               <div className="flex gap-3">
                 <CircleAlert
@@ -149,7 +167,9 @@ export default function AccountSettings() {
                   aria-hidden="true"
                 />
                 <div className="grow space-y-1">
-                  <p className="text-sm font-medium">Error in {showAlert.field}</p>
+                  <p className="text-sm font-medium">
+                    Error in {showAlert.field}
+                  </p>
                   <ul className="list-inside list-disc text-sm opacity-80">
                     <li>{showAlert.message}</li>
                     <li>{showAlert.error}</li>
@@ -169,10 +189,8 @@ export default function AccountSettings() {
                 Completed successfully! : {showAlert.message}
               </p>
             </div>
-          )
-        )} 
+          ))}
       </CardContent>
     </Card>
-  )
+  );
 }
-

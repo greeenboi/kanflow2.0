@@ -1,7 +1,7 @@
-import { getUserByUsername, createUser, type User } from '@/lib/db/actions';
-import { updateUser } from '@/lib/store/userStore'; // Import updateUser
 import bcrypt from 'bcryptjs';
 import { toast } from 'sonner';
+import { createUser, getUserByUsername, type User } from '@/lib/db/actions';
+import { updateUser } from '@/lib/store/userStore'; // Import updateUser
 
 const guestLogin = async () => {
   console.log('guestLogin: Guest login attempt started');

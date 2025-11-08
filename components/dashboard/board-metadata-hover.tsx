@@ -1,11 +1,11 @@
+import { formatDistanceToNow } from 'date-fns';
+import { Calendar, Clock, Eye, EyeClosed, Globe, Lock } from 'lucide-react';
+import type { Board } from '@/actions/dashboard/kanban/boards';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
-import { Calendar, Globe, Lock, Clock, Eye, EyeClosed } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import type { Board } from '@/actions/dashboard/kanban/boards';
 
 interface BoardMetadataHoverProps {
   board: Board | null;

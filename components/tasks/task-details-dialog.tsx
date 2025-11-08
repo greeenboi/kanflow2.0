@@ -1,31 +1,52 @@
 'use client';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import {
-  CalendarDays,
-  Clock,
-  User,
-  Paperclip,
-  MessageSquare,
-  AlertCircle,
-  LoaderPinwheel,
-  PlusCircle,
-} from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  AlertCircle,
+  CalendarDays,
+  Check,
+  Clock,
+  FileCode,
+  FileText,
+  ListTodo,
+  LoaderPinwheel,
+  MessageSquare,
+  Paperclip,
+  Pencil,
+  PlusCircle,
+  User,
+  X,
+} from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { type Board, getBoardById } from '@/actions/dashboard/kanban/boards';
 import type { Comment, Task } from '@/actions/dashboard/kanban/tasks';
-import { Separator } from '@/components/ui/separator';
+import {
+  addComment,
+  deleteTaskAndComments,
+  getTaskComments,
+  updateTask,
+} from '@/actions/dashboard/kanban/tasks';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import {
   Table,
   TableBody,
@@ -34,25 +55,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ListTodo, FileText, FileCode } from 'lucide-react';
-import { type Board, getBoardById } from '@/actions/dashboard/kanban/boards';
-import { useEffect, useState, useCallback } from 'react';
-import { toast } from 'sonner';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Pencil, Check, X } from 'lucide-react';
-import { updateTask, getTaskComments, addComment, deleteTaskAndComments } from '@/actions/dashboard/kanban/tasks';
-import { LabelSelector } from './label-selector';
-import { getUser } from '@/lib/store/userStore';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { User as UserType } from '@/lib/db/actions';
 import { getUserById } from '@/lib/db/actions';
+import { getUser } from '@/lib/store/userStore';
+import { LabelSelector } from './label-selector';
 
 type ColumnId = 1 | 2 | 3;
 type ColumnInfo = {
@@ -91,9 +105,9 @@ export function TaskDetailsDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<{
-    checklist: { text: string; checked: boolean; }[];
+    checklist: { text: string; checked: boolean }[];
     labels: string[];
-    attachments: number[]; 
+    attachments: number[];
     description: string;
     markdown_content?: string;
   }>({
@@ -114,12 +128,15 @@ export function TaskDetailsDialog({
   const [newCommentText, setNewCommentText] = useState('');
 
   // Add this function to calculate checklist progress
-  const updateChecklistProgress = useCallback((checklist: { checked: boolean }[]) => {
-    const total = checklist.length;
-    const completed = checklist.filter(item => item.checked).length;
-    const percentage = total > 0 ? (completed / total) * 100 : 0;
-    setChecklistProgress({ completed, total, percentage });
-  }, []);
+  const updateChecklistProgress = useCallback(
+    (checklist: { checked: boolean }[]) => {
+      const total = checklist.length;
+      const completed = checklist.filter(item => item.checked).length;
+      const percentage = total > 0 ? (completed / total) * 100 : 0;
+      setChecklistProgress({ completed, total, percentage });
+    },
+    []
+  );
 
   const getBoardName = useCallback(async (boardId: Board['id']) => {
     setIsLoading(true);
@@ -127,11 +144,11 @@ export function TaskDetailsDialog({
       const data = await getBoardById(boardId);
       if (!data) {
         toast.error('Failed to get board name', {
-          description: "Refetch the data?",
+          description: 'Refetch the data?',
           action: {
-            label: "Retry",
-            onClick: () => getBoardName(boardId)
-          }
+            label: 'Retry',
+            onClick: () => getBoardName(boardId),
+          },
         });
       } else {
         setBoardName(data.name);
@@ -166,7 +183,7 @@ export function TaskDetailsDialog({
       if (task) {
         const fetchedComments = await getTaskComments(task.id);
         const withUserNames = await Promise.all(
-          fetchedComments.map(async (comment) => {
+          fetchedComments.map(async comment => {
             const userData = await getUserById(comment.user_id);
             return {
               ...comment,
@@ -185,17 +202,19 @@ export function TaskDetailsDialog({
   if (!task) return null;
 
   const columnNames: ColumnMap = {
-    1: { name: "To Do", class: "bg-gray-100 text-gray-800" },
-    2: { name: "In Progress", class: "bg-yellow-100 text-yellow-800" },
-    3: { name: "Done", class: "bg-green-100 text-green-800" },
+    1: { name: 'To Do', class: 'bg-gray-100 text-gray-800' },
+    2: { name: 'In Progress', class: 'bg-yellow-100 text-yellow-800' },
+    3: { name: 'Done', class: 'bg-green-100 text-green-800' },
   } as const;
 
   // Helper function to safely get column info
   const getColumnInfo = (columnId: number): ColumnInfo => {
-    return columnNames[columnId as ColumnId] || { 
-      name: `Column ${columnId}`, 
-      class: "bg-gray-100 text-gray-800" 
-    };
+    return (
+      columnNames[columnId as ColumnId] || {
+        name: `Column ${columnId}`,
+        class: 'bg-gray-100 text-gray-800',
+      }
+    );
   };
 
   const priorityColors = {
@@ -221,7 +240,11 @@ export function TaskDetailsDialog({
 
     try {
       let updateValue = value;
-      if (field === 'checklist' || field === 'attachments' || field === 'labels') {
+      if (
+        field === 'checklist' ||
+        field === 'attachments' ||
+        field === 'labels'
+      ) {
         updateValue = JSON.stringify(value);
       }
 
@@ -263,36 +286,28 @@ export function TaskDetailsDialog({
   }
 
   // Add these helper components
-  const EditableField = ({ 
-    field, 
-    value, 
-    onSave 
-  }: { 
-    field: string; 
-    value: string; 
+  const EditableField = ({
+    field,
+    value,
+    onSave,
+  }: {
+    field: string;
+    value: string;
     onSave: (value: string) => void;
   }) => {
     const [editValue, setEditValue] = useState(value);
-    
+
     return editingField === field ? (
       <div className="flex gap-2">
         <Input
           value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
+          onChange={e => setEditValue(e.target.value)}
           className="flex-1"
         />
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onSave(editValue)}
-        >
+        <Button variant="ghost" size="sm" onClick={() => onSave(editValue)}>
           <Check className="h-4 w-4" />
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setEditingField(null)}
-        >
+        <Button variant="ghost" size="sm" onClick={() => setEditingField(null)}>
           <X className="h-4 w-4" />
         </Button>
       </div>
@@ -353,10 +368,13 @@ export function TaskDetailsDialog({
                   <div className="flex-1 flex gap-2">
                     <Input
                       value={item.text}
-                      onChange={(e) => {
+                      onChange={e => {
                         const newChecklist = [...editValues.checklist];
                         newChecklist[index].text = e.target.value;
-                        setEditValues({ ...editValues, checklist: newChecklist });
+                        setEditValues({
+                          ...editValues,
+                          checklist: newChecklist,
+                        });
                       }}
                     />
                     <Button
@@ -399,9 +417,12 @@ export function TaskDetailsDialog({
           variant="ghost"
           size="sm"
           className="mt-2 w-full"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
-            const newChecklist = [...editValues.checklist, { text: '', checked: false }];
+            const newChecklist = [
+              ...editValues.checklist,
+              { text: '', checked: false },
+            ];
             setEditValues({ ...editValues, checklist: newChecklist });
             setEditingField('checklist-new');
           }}
@@ -461,14 +482,22 @@ export function TaskDetailsDialog({
               )}
             </div>
 
-            <Tabs defaultValue="details" orientation="vertical" className="flex w-full gap-2">
+            <Tabs
+              defaultValue="details"
+              orientation="vertical"
+              className="flex w-full gap-2"
+            >
               <TabsList className="flex-col h-auto">
                 <TooltipProvider delayDuration={0}>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span>
                         <TabsTrigger value="details" className="py-3">
-                          <ListTodo size={16} strokeWidth={2} aria-hidden="true" />
+                          <ListTodo
+                            size={16}
+                            strokeWidth={2}
+                            aria-hidden="true"
+                          />
                         </TabsTrigger>
                       </span>
                     </TooltipTrigger>
@@ -483,7 +512,11 @@ export function TaskDetailsDialog({
                     <TooltipTrigger asChild>
                       <span>
                         <TabsTrigger value="description" className="py-3">
-                          <FileText size={16} strokeWidth={2} aria-hidden="true" />
+                          <FileText
+                            size={16}
+                            strokeWidth={2}
+                            aria-hidden="true"
+                          />
                         </TabsTrigger>
                       </span>
                     </TooltipTrigger>
@@ -499,11 +532,18 @@ export function TaskDetailsDialog({
                       <TooltipTrigger asChild>
                         <span>
                           <TabsTrigger value="content" className="py-3">
-                            <FileCode size={16} strokeWidth={2} aria-hidden="true" />
+                            <FileCode
+                              size={16}
+                              strokeWidth={2}
+                              aria-hidden="true"
+                            />
                           </TabsTrigger>
                         </span>
                       </TooltipTrigger>
-                      <TooltipContent side="right" className="px-2 py-1 text-xs">
+                      <TooltipContent
+                        side="right"
+                        className="px-2 py-1 text-xs"
+                      >
                         Content
                       </TooltipContent>
                     </Tooltip>
@@ -517,44 +557,50 @@ export function TaskDetailsDialog({
                       <CardTitle>Task Details</CardTitle>
                     </CardHeader>
                     <CardContent>
-
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[200px]">Board</TableHead>
-                          <TableHead className="w-[200px]">Column</TableHead>
-                          <TableHead>Priority</TableHead>
-                          {task.parent_task_id && ( 
-                            <TableHead>Parent Task</TableHead>
-                          )}
-                          {task.estimated_time && <TableCell className="font-medium">Time to Complete</TableCell>}
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell>
-                            {isLoading ? (
-                              <div className="flex items-center gap-2">
-                                <LoaderPinwheel className="h-4 w-4 animate-spin" />
-                                <span>Loading...</span>
-                              </div>
-                            ) : boardName || `Board ${task.board_id}`}
-                          </TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant="secondary" 
-                              className={getColumnInfo(task.column_id).class}
-                            >
-                              {getColumnInfo(task.column_id).name}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>#{task.order_num}</TableCell>
-                          {task.parent_task_id &&  <TableCell>#{task.parent_task_id}</TableCell>}
-                          <TableCell>{task.estimated_time}</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                      
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-[200px]">Board</TableHead>
+                            <TableHead className="w-[200px]">Column</TableHead>
+                            <TableHead>Priority</TableHead>
+                            {task.parent_task_id && (
+                              <TableHead>Parent Task</TableHead>
+                            )}
+                            {task.estimated_time && (
+                              <TableCell className="font-medium">
+                                Time to Complete
+                              </TableCell>
+                            )}
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell>
+                              {isLoading ? (
+                                <div className="flex items-center gap-2">
+                                  <LoaderPinwheel className="h-4 w-4 animate-spin" />
+                                  <span>Loading...</span>
+                                </div>
+                              ) : (
+                                boardName || `Board ${task.board_id}`
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="secondary"
+                                className={getColumnInfo(task.column_id).class}
+                              >
+                                {getColumnInfo(task.column_id).name}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>#{task.order_num}</TableCell>
+                            {task.parent_task_id && (
+                              <TableCell>#{task.parent_task_id}</TableCell>
+                            )}
+                            <TableCell>{task.estimated_time}</TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -567,7 +613,7 @@ export function TaskDetailsDialog({
                       <EditableField
                         field="description"
                         value={editValues.description}
-                        onSave={(value) => handleUpdate('description', value)}
+                        onSave={value => handleUpdate('description', value)}
                       />
                     </CardContent>
                   </Card>
@@ -582,7 +628,9 @@ export function TaskDetailsDialog({
                         <EditableField
                           field="markdown_content"
                           value={editValues.markdown_content || ''}
-                          onSave={(value) => handleUpdate('markdown_content', value)}
+                          onSave={value =>
+                            handleUpdate('markdown_content', value)
+                          }
                         />
                       </CardContent>
                     </Card>
@@ -601,7 +649,7 @@ export function TaskDetailsDialog({
                 <AccordionContent>
                   <LabelSelector
                     selectedLabels={editValues.labels}
-                    onLabelsChange={(newLabels) => {
+                    onLabelsChange={newLabels => {
                       setEditValues({ ...editValues, labels: newLabels });
                       handleUpdate('labels', newLabels);
                     }}
@@ -617,12 +665,16 @@ export function TaskDetailsDialog({
                 <AccordionContent>
                   {attachments.length > 0 ? (
                     <ul className="list-disc list-inside">
-                      {attachments.map((attachmentId: number, index: number) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <Paperclip className="h-4 w-4" />
-                          <span className="text-sm">Attachment #{attachmentId}</span>
-                        </li>
-                      ))}
+                      {attachments.map(
+                        (attachmentId: number, index: number) => (
+                          <li key={index} className="flex items-center gap-2">
+                            <Paperclip className="h-4 w-4" />
+                            <span className="text-sm">
+                              Attachment #{attachmentId}
+                            </span>
+                          </li>
+                        )
+                      )}
                     </ul>
                   ) : (
                     <EmptyState message="No attachments added to this task." />
@@ -644,11 +696,12 @@ export function TaskDetailsDialog({
                     <EmptyState message="No comments added yet." />
                   ) : (
                     <div className="space-y-3">
-                      {comments.map((comment) => (
+                      {comments.map(comment => (
                         <div key={comment.id} className="p-2 border rounded">
                           <p className="text-sm mb-1">{comment.content}</p>
                           <p className="text-xs text-muted-foreground">
-                            Posted by {comment.user_name} on {comment.created_at}
+                            Posted by {comment.user_name} on{' '}
+                            {comment.created_at}
                           </p>
                         </div>
                       ))}
@@ -657,7 +710,7 @@ export function TaskDetailsDialog({
                   <div className="mt-3 flex items-center gap-2">
                     <Input
                       value={newCommentText}
-                      onChange={(e) => setNewCommentText(e.target.value)}
+                      onChange={e => setNewCommentText(e.target.value)}
                       placeholder="Add a comment..."
                     />
                     <Button onClick={handleAddComment}>Post</Button>
@@ -698,4 +751,3 @@ export function TaskDetailsDialog({
     </Dialog>
   );
 }
-

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import type { CreateBoardData } from '@/actions/dashboard/kanban/boards';
+import { createBoard } from '@/actions/dashboard/kanban/boards';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,8 +23,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { createBoard } from '@/actions/dashboard/kanban/boards';
-import type { CreateBoardData } from '@/actions/dashboard/kanban/boards';
 import { useUser } from '@/context/UserContext';
 
 interface CreateBoardDialogProps {

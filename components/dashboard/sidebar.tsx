@@ -1,14 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { KanbanSquare, LayoutDashboard, Search, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { LayoutDashboard, KanbanSquare, Search, Settings } from 'lucide-react';
-import { getUserBoards } from '@/actions/dashboard/kanban/boards';
+import { useCallback, useEffect, useState } from 'react';
 import type { Board } from '@/actions/dashboard/kanban/boards';
+import { getUserBoards } from '@/actions/dashboard/kanban/boards';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUser } from '@/context/UserContext';
-import { NavUser } from './nav-user';
+import { Label } from '../ui/label';
 import {
   SidebarContent,
   SidebarFooter,
@@ -23,9 +23,9 @@ import {
   SidebarProvider,
   SidebarSeparator,
 } from '../ui/sidebar';
-import { NavMain } from './nav-boards';
-import { Label } from '../ui/label';
 import { DatePicker } from './date-picker';
+import { NavMain } from './nav-boards';
+import { NavUser } from './nav-user';
 
 const sidebarNavItems = [
   {
@@ -37,7 +37,7 @@ const sidebarNavItems = [
     title: 'Settings',
     href: '/dashboard/settings',
     icon: Settings,
-  }
+  },
 ];
 
 export function Sidebar() {
@@ -114,10 +114,7 @@ export function Sidebar() {
               const Icon = item.icon;
               return (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    variant="default"
-                    asChild
-                  >
+                  <SidebarMenuButton variant="default" asChild>
                     <Link
                       key={item.href}
                       href={item.href}

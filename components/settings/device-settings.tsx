@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function DeviceSettings() {
   return (
@@ -7,12 +13,12 @@ export default function DeviceSettings() {
         <CardHeader>
           <CardTitle>Coming Soon</CardTitle>
           <CardDescription>
-            Configure your device settings including global shortcuts, 
-            and system-wide integrations. Stay tuned for powerful customization options!
+            Configure your device settings including global shortcuts, and
+            system-wide integrations. Stay tuned for powerful customization
+            options!
           </CardDescription>
         </CardHeader>
       </div>
     </Card>
-  )
+  );
 }
-

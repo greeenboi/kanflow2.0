@@ -1,47 +1,58 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
-import GeneralSettings from '@/components/settings/general-settings'
-import AccountSettings from '@/components/settings/account-settings'
-import DeviceSettings from '@/components/settings/device-settings'
-import ApplicationSettings from '@/components/settings/application-settings'
-import NotificationSettings from '@/components/settings/notification-settings'
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import AccountSettings from '@/components/settings/account-settings';
+import ApplicationSettings from '@/components/settings/application-settings';
+import DeviceSettings from '@/components/settings/device-settings';
+import GeneralSettings from '@/components/settings/general-settings';
+import NotificationSettings from '@/components/settings/notification-settings';
 // import StorageSettings from '@/components/settings/storage-settings'
-import PlanSettings from '@/components/settings/plan-settings'
-import { toast } from 'sonner'
-
+import PlanSettings from '@/components/settings/plan-settings';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function SettingsPage() {
-  const searchParams = useSearchParams()
-  const activeTabParam = searchParams.get('tab') ?? 'general'
-  const [activeTab, setActiveTab] = useState(activeTabParam)
+  const searchParams = useSearchParams();
+  const activeTabParam = searchParams.get('tab') ?? 'general';
+  const [activeTab, setActiveTab] = useState(activeTabParam);
 
   const Router = useRouter();
 
   const handleSave = () => {
-    toast.success("Settings saved", {
-      description: "Your settings have been saved successfully.",
+    toast.success('Settings saved', {
+      description: 'Your settings have been saved successfully.',
       action: {
-        label: "Go back",
+        label: 'Go back',
         onClick: () => Router.back(),
       },
-    })
-  }
+    });
+  };
 
   return (
     <div className="container mx-auto py-10">
       <Card>
         <CardHeader>
           <CardTitle>Settings</CardTitle>
-          <CardDescription>Manage your account settings and preferences.</CardDescription>
+          <CardDescription>
+            Manage your account settings and preferences.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <ScrollArea className="w-full whitespace-nowrap">
               <TabsList className="w-full justify-start">
                 <TabsTrigger value="general">General</TabsTrigger>
@@ -83,6 +94,5 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

@@ -1,27 +1,26 @@
 'use client';
 
+import { ChevronLeft, ChevronRight, Plus, Save } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight, Save } from 'lucide-react';
-import { TaskDialog } from '@/components/tasks/task-dialog';
-import { DashboardHeader } from '@/components/dashboard/header';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { type Board, getBoardById } from '@/actions/dashboard/kanban/boards';
 import {
+  createTask,
   getTasksByBoard,
   moveTask,
   type Task,
   type TaskStatus,
-  createTask,
   updateTask,
 } from '@/actions/dashboard/kanban/tasks';
-import type { TaskFormData } from '@/types/kanban';
+import { BoardMetadataHover } from '@/components/dashboard/board-metadata-hover';
+import { DashboardHeader } from '@/components/dashboard/header';
 import { KanbanCard } from '@/components/kanban/card';
 import { TaskDetailsDialog } from '@/components/tasks/task-details-dialog';
+import { TaskDialog } from '@/components/tasks/task-dialog';
+import { Button } from '@/components/ui/button';
 import { CoolMode } from '@/components/ui/cool-mode';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { BoardMetadataHover } from '@/components/dashboard/board-metadata-hover';
-import { useRouter } from 'next/navigation';
+import type { TaskFormData } from '@/types/kanban';
 
 type Column = {
   id: string;

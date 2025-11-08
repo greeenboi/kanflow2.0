@@ -16,7 +16,7 @@ const shortcuts = [
 export function KeyboardShortcuts() {
   return (
     <HoverCard>
-      <HoverCardTrigger className='bg-transparent' asChild>
+      <HoverCardTrigger className="bg-transparent" asChild>
         <Button className="p-2 bg-transparent rounded-md">
           <Keyboard className="h-4 w-4" />
         </Button>

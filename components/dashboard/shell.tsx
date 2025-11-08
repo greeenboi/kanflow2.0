@@ -1,6 +1,6 @@
 'use client';
-import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Sidebar } from '@/components/dashboard/sidebar';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { BreadcrumbComponent } from '../ui/breadcrumbgenerator';
 import { KeyboardShortcuts } from '../ui/keyboard-shortcuts';
 

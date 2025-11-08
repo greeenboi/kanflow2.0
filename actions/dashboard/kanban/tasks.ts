@@ -126,10 +126,12 @@ export async function getTasksByBoard(boardId: number): Promise<Task[]> {
         ORDER BY column_id, order_num
     `;
   const rows = await db.select<Task[]>(sql, [boardId]);
-  return rows.map((row) => ({
+  return rows.map(row => ({
     ...row,
     labels: row.labels ? JSON.parse(row.labels as unknown as string) : [],
-    attachments: row.attachments ? JSON.parse(row.attachments as unknown as string) : [],
+    attachments: row.attachments
+      ? JSON.parse(row.attachments as unknown as string)
+      : [],
   }));
 }
 
@@ -217,7 +219,9 @@ export async function getTasksByDueDate(date: string): Promise<TasksByDate[]> {
   );
 }
 
-export async function addComment(comment: Omit<Comment, 'id' | 'created_at' | 'last_updated'>): Promise<number> {
+export async function addComment(
+  comment: Omit<Comment, 'id' | 'created_at' | 'last_updated'>
+): Promise<number> {
   const db = await Database.load('sqlite:kanflow.db');
   const sql = `
     INSERT INTO comments (task_id, user_id, content, parent_comment_id)
@@ -227,7 +231,7 @@ export async function addComment(comment: Omit<Comment, 'id' | 'created_at' | 'l
     comment.task_id,
     comment.user_id,
     comment.content,
-    comment.parent_comment_id || null
+    comment.parent_comment_id || null,
   ]);
   // biome-ignore lint/style/noNonNullAssertion: <explanation>
   return result.lastInsertId!;
@@ -241,7 +245,9 @@ export async function getTaskComments(taskId: number): Promise<Comment[]> {
   );
 }
 
-export async function addAttachment(attachment: Omit<Attachment, 'id' | 'created_at'>): Promise<number> {
+export async function addAttachment(
+  attachment: Omit<Attachment, 'id' | 'created_at'>
+): Promise<number> {
   const db = await Database.load('sqlite:kanflow.db');
   const sql = `
     INSERT INTO attachments (task_id, user_id, file_name, file_path, file_size, file_type)
@@ -253,13 +259,15 @@ export async function addAttachment(attachment: Omit<Attachment, 'id' | 'created
     attachment.file_name,
     attachment.file_path,
     attachment.file_size,
-    attachment.file_type
+    attachment.file_type,
   ]);
   // biome-ignore lint/style/noNonNullAssertion: <explanation>
   return result.lastInsertId!;
 }
 
-export async function getTaskAttachments(taskId: number): Promise<Attachment[]> {
+export async function getTaskAttachments(
+  taskId: number
+): Promise<Attachment[]> {
   const db = await Database.load('sqlite:kanflow.db');
   return await db.select<Attachment[]>(
     'SELECT * FROM attachments WHERE task_id = ? ORDER BY created_at DESC',

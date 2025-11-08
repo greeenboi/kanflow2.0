@@ -1,24 +1,24 @@
 'use client';
 
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import guestLogin from '@/actions/auth/guestLogin';
+import registerUser from '@/actions/auth/register';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from '@/components/ui/form';
-import { useRouter } from 'next/navigation';
-import registerUser from '@/actions/auth/register';
-import guestLogin from '@/actions/auth/guestLogin';
+import { Input } from '@/components/ui/input';
 
 interface RegisterFormData {
   firstName: string;

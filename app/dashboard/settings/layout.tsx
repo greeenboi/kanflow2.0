@@ -1,12 +1,7 @@
-
 export default function SettingsLayout({
-    children
-}:{
-    children: React.ReactNode
+  children,
+}: {
+  children: React.ReactNode;
 }) {
-    return (
-        <main>
-            {children}
-        </main>
-    )
+  return <main>{children}</main>;
 }

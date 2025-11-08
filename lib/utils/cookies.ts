@@ -1,5 +1,5 @@
-import type { User } from '@/lib/db/actions';
 import Cookies from 'js-cookie';
+import type { User } from '@/lib/db/actions';
 
 const USER_COOKIE_KEY = 'app_user';
 

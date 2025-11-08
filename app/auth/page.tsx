@@ -1,8 +1,11 @@
 'use client';
 
-import { Suspense, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { RefreshCcw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { useContainerSize } from '@/hooks/use-container-size';
+import { Suspense, useRef } from 'react';
+import LoginForm from '@/components/auth/login-form';
+import RegisterForm from '@/components/auth/register-form';
 import {
   Card,
   CardContent,
@@ -10,14 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
 import FlickeringGrid from '@/components/ui/flickering-grid';
 import ShineBorder from '@/components/ui/shine-border';
-import { AnimatePresence, motion } from 'framer-motion';
-import { RefreshCcw } from 'lucide-react';
-import LoginForm from '@/components/auth/login-form';
-import RegisterForm from '@/components/auth/register-form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useContainerSize } from '@/hooks/use-container-size';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);

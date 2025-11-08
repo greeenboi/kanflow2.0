@@ -1,53 +1,25 @@
 'use client';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Checkbox } from '@radix-ui/react-checkbox';
+import { PopoverPortal } from '@radix-ui/react-popover';
 import {
   AlertTriangleIcon,
   ArrowDownIcon,
   ArrowRightIcon,
   ArrowUpIcon,
   CalendarIcon,
+  Check,
+  ChevronsUpDown,
   PlusCircle,
   Trash2,
 } from 'lucide-react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import type { Task } from '@/actions/dashboard/kanban/tasks';
-import type { TaskFormData } from '@/types/kanban';
-import { Separator } from '../ui/separator';
-import { Checkbox } from '@radix-ui/react-checkbox';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Command,
   CommandEmpty,
@@ -56,9 +28,38 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { PopoverPortal } from '@radix-ui/react-popover';
-import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import type { TaskFormData } from '@/types/kanban';
+import { Separator } from '../ui/separator';
 import { LabelSelector } from './label-selector';
 
 const timeOptions = Array.from({ length: 49 }, (_, i) => {
@@ -87,8 +88,6 @@ const taskFormSchema = z.object({
     .optional(),
   labels: z.array(z.string()).optional(),
 });
-
-
 
 interface TaskDialogProps {
   open: boolean;
@@ -492,7 +491,7 @@ export function TaskDialog({
                 render={({ field }) => (
                   <LabelSelector
                     selectedLabels={field.value || []}
-                    onLabelsChange={(newLabels) => field.onChange(newLabels)}
+                    onLabelsChange={newLabels => field.onChange(newLabels)}
                   />
                 )}
               />

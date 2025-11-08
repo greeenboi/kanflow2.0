@@ -12,7 +12,6 @@ export interface TaskFormData {
   checklist?: Array<{ text: string; checked: boolean }>;
 }
 
-
 export type PendingChange = {
   taskId: number;
   newColumnId: number;

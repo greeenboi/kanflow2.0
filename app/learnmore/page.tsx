@@ -1,4 +1,9 @@
+import { ArrowLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { BreadcrumbComponent } from '@/components/ui/breadcrumbgenerator';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -6,12 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ChevronRight, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { BreadcrumbComponent } from '@/components/ui/breadcrumbgenerator';
 
 export default function Page() {
   return (

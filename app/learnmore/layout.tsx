@@ -1,8 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
 import FlickeringGrid from '@/components/ui/flickering-grid';
 import { useContainerSize } from '@/hooks/use-container-size';
-import { useRef } from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);

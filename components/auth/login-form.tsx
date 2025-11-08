@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, Loader2, VenetianMask } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import guestLogin from '@/actions/auth/guestLogin';
+import loginUser from '@/actions/auth/login';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
@@ -15,10 +17,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { CoolMode } from '../ui/cool-mode';
-import { toast } from 'sonner';
-import loginUser from '@/actions/auth/login';
-import guestLogin from '@/actions/auth/guestLogin';
 
 type LoginFormData = {
   email: string;

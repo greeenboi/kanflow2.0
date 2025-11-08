@@ -1,20 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import {
+  getTasksByDueDate,
+  type TasksByDate,
+} from '@/actions/dashboard/kanban/tasks';
+import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
 } from '@/components/ui/sidebar';
-import { Badge } from '@/components/ui/badge';
-import {
-  getTasksByDueDate,
-  type TasksByDate,
-} from '@/actions/dashboard/kanban/tasks';
-import { format } from 'date-fns';
-import Link from 'next/link';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 export function DatePicker() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(

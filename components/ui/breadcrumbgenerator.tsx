@@ -1,9 +1,8 @@
 'use client';
 
-import * as React from 'react';
+import { ChevronDownIcon, Home } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-
-import { useMediaQuery } from '@/hooks/use-media-query';
+import * as React from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,14 +11,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Home } from 'lucide-react';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDownIcon } from 'lucide-react';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 const formatLabel = (segment: string): string => {
   return segment
@@ -72,11 +70,13 @@ export function BreadcrumbComponent() {
                     <ChevronDownIcon />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">
-                    {parallelPaths[item.label.toLowerCase()].map((menuItem, idx) => (
-                      <DropdownMenuItem key={idx} asChild>
-                        <a href={menuItem.href}>{menuItem.label}</a>
-                      </DropdownMenuItem>
-                    ))}
+                    {parallelPaths[item.label.toLowerCase()].map(
+                      (menuItem, idx) => (
+                        <DropdownMenuItem key={idx} asChild>
+                          <a href={menuItem.href}>{menuItem.label}</a>
+                        </DropdownMenuItem>
+                      )
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : item.href ? (

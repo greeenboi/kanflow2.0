@@ -1,8 +1,8 @@
+import bcrypt from 'bcryptjs';
+import { toast } from 'sonner';
 import { createUser, getUserByEmail } from '@/lib/db/actions';
 import { updateUser } from '@/lib/store/userStore'; // Import updateUser
 import type { RegisterFormData } from '@/lib/types/register';
-import bcrypt from 'bcryptjs';
-import { toast } from 'sonner';
 
 const registerUser = async (data: RegisterFormData) => {
   console.log('registerUser: Registration started');

@@ -1,9 +1,9 @@
 'use client';
-import { CommandDialogMenu } from '@/components/dashboard/command-dialog';
-import { DashboardShell } from '@/components/dashboard/shell';
 import { RefreshCcw } from 'lucide-react';
 import { Suspense, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { CommandDialogMenu } from '@/components/dashboard/command-dialog';
+import { DashboardShell } from '@/components/dashboard/shell';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
   return (
     <DashboardShell>
-      <Suspense 
+      <Suspense
         fallback={<RefreshCcw className="animate-spin" />}
         unstable_expectedLoadTime={1000}
       >

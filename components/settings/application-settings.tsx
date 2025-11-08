@@ -1,15 +1,21 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Button } from "../ui/button"
-import { InfoIcon, Sparkles, X } from "lucide-react"
-import { toast } from "sonner"
-import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart';
+import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart';
+import { InfoIcon, Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '../ui/button';
 
 export default function ApplicationSettings() {
   const [autostartEnabled, setAutostartEnabled] = useState(false);
-  
+
   useEffect(() => {
     // Check initial autostart status
     const checkAutostart = async () => {
@@ -27,9 +33,9 @@ export default function ApplicationSettings() {
         await disable();
       }
       setAutostartEnabled(checked);
-      toast.success(checked ? "Autostart enabled" : "Autostart disabled");
+      toast.success(checked ? 'Autostart enabled' : 'Autostart disabled');
     } catch (error) {
-      toast.error("Failed to update autostart settings");
+      toast.error('Failed to update autostart settings');
     }
   };
 
@@ -78,23 +84,30 @@ export default function ApplicationSettings() {
     <Card>
       <CardHeader>
         <CardTitle>Application Settings</CardTitle>
-        <CardDescription>Customize your application experience.</CardDescription>
+        <CardDescription>
+          Customize your application experience.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center justify-between">
           <Label htmlFor="autostart">Launch on Startup</Label>
-          <Switch 
-            id="autostart" 
+          <Switch
+            id="autostart"
             checked={autostartEnabled}
             onCheckedChange={handleAutostart}
           />
         </div>
         <div className="flex items-center justify-between">
-          <Label htmlFor="auto-update" className="flex gap-2 items-center">Auto Update <InfoIcon className="w-4 h-4 cursor-pointer" onClick={handleComingSoon}  /></Label>
-          <Switch id="auto-update" disabled/>
+          <Label htmlFor="auto-update" className="flex gap-2 items-center">
+            Auto Update{' '}
+            <InfoIcon
+              className="w-4 h-4 cursor-pointer"
+              onClick={handleComingSoon}
+            />
+          </Label>
+          <Switch id="auto-update" disabled />
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

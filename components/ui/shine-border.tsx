@@ -49,7 +49,8 @@ export default function ShineBorder({
             '--border-width': `${borderWidth}px`,
             '--border-radius': `${borderRadius}px`,
             '--duration': `${duration}s`,
-            '--mask-linear-gradient': 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            '--mask-linear-gradient':
+              'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
             '--background-radial-gradient': `radial-gradient(transparent,transparent, ${Array.isArray(color) ? color.join(',') : color},transparent,transparent)`,
           } as React.CSSProperties
         }

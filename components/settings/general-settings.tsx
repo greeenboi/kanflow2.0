@@ -1,35 +1,41 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { platform } from '@tauri-apps/plugin-os'
+import { getVersion } from '@tauri-apps/api/app';
 import { invoke } from '@tauri-apps/api/core';
 import { fetch } from '@tauri-apps/plugin-http';
-import { getVersion } from '@tauri-apps/api/app'
-import { useEffect, useState } from "react"
-import { BugReportModal } from "./bug-report-modal"
+import { platform } from '@tauri-apps/plugin-os';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
-import { toast } from "sonner"
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { BugReportModal } from './bug-report-modal';
 
 export default function GeneralSettings() {
-  const [systemInfo, setSystemInfo] = useState<string>('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [appVersion, setAppVersion] = useState<string>('')
+  const [systemInfo, setSystemInfo] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appVersion, setAppVersion] = useState<string>('');
 
   useEffect(() => {
     const getSystemInfo = async () => {
-      const currentPlatform = platform()
-      const version = await getVersion()
-      setSystemInfo(currentPlatform)
-      setAppVersion(version)
-    }
-    getSystemInfo()
-  }, [])
+      const currentPlatform = platform();
+      const version = await getVersion();
+      setSystemInfo(currentPlatform);
+      setAppVersion(version);
+    };
+    getSystemInfo();
+  }, []);
 
   const openInBrowser = async (url: string) => {
     try {
@@ -40,42 +46,45 @@ export default function GeneralSettings() {
       console.error('Failed to open URL:', error);
     }
   };
-  
+
   const checkForUpdates = async () => {
     interface VersionResponse {
       version: string;
       published_at: string;
       html_url: string;
     }
-    
+
     try {
-      const response = await fetch('https://version-checker-api.suvan-gowrishanker-204.workers.dev/api/version/greeenboi/kanflow2.0', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
+      const response = await fetch(
+        'https://version-checker-api.suvan-gowrishanker-204.workers.dev/api/version/greeenboi/kanflow2.0',
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+          },
         }
-      });
+      );
       const data: VersionResponse = await response.json();
-      
+
       if (data.version !== appVersion) {
-        toast.info("Update Available!", {
+        toast.info('Update Available!', {
           description: `Version ${data.version} is available. Current version: ${appVersion}`,
           action: {
-            label: "View Release",
-            onClick: () => openInBrowser(data.html_url)
-          }
+            label: 'View Release',
+            onClick: () => openInBrowser(data.html_url),
+          },
         });
       } else {
         toast.success("You're up to date!", {
-          description: `Current version: ${appVersion}`
+          description: `Current version: ${appVersion}`,
         });
       }
     } catch (error) {
-      toast.error("Failed to check for updates", {
-        description: "Please try again later or check your connection."
+      toast.error('Failed to check for updates', {
+        description: 'Please try again later or check your connection.',
       });
     }
-  }
+  };
 
   return (
     <Card>
@@ -97,7 +106,7 @@ export default function GeneralSettings() {
           </Button>
         </div>
 
-        <BugReportModal 
+        <BugReportModal
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
           systemInfo={systemInfo}
@@ -110,7 +119,9 @@ export default function GeneralSettings() {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="font-medium">Application Name</TableCell>
+                    <TableCell className="font-medium">
+                      Application Name
+                    </TableCell>
                     <TableCell>Kanflow</TableCell>
                   </TableRow>
                   <TableRow>
@@ -132,6 +143,5 @@ export default function GeneralSettings() {
         </Accordion>
       </CardContent>
     </Card>
-  )
+  );
 }
-

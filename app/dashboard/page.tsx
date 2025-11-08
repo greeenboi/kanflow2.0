@@ -1,5 +1,17 @@
 'use client';
+import { PlusCircle, RefreshCw } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import {
+  getRecentTasks,
+  getTaskStats,
+  type RecentTask,
+  type TaskStats,
+} from '@/actions/dashboard/kanban/tasks';
+import { CreateBoardDialog } from '@/components/dashboard/create-board-dialog';
 import { DashboardHeader } from '@/components/dashboard/header';
+
+import { RecentTasks } from '@/components/dashboard/recent-tasks';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -8,18 +20,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { PlusCircle, RefreshCw } from 'lucide-react';
-import { CreateBoardDialog } from '@/components/dashboard/create-board-dialog';
-import { useHotkeys } from 'react-hotkeys-hook';
-
-import { RecentTasks } from '@/components/dashboard/recent-tasks';
-import {
-  getRecentTasks,
-  getTaskStats,
-  type RecentTask,
-  type TaskStats,
-} from '@/actions/dashboard/kanban/tasks';
-import { useEffect, useState, useCallback } from 'react';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<TaskStats | null>(null);
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       setIsRefetching(false);
     }
   }, []);
-  
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -72,8 +72,10 @@ export default function DashboardPage() {
               New Board
             </Button>
           </CreateBoardDialog>
-          <Button variant='ghost' onClick={fetchData} disabled={isRefetching}>
-            <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+          <Button variant="ghost" onClick={fetchData} disabled={isRefetching}>
+            <RefreshCw
+              className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`}
+            />
           </Button>
         </div>
       </DashboardHeader>
