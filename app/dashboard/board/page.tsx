@@ -20,6 +20,8 @@ import { TaskDetailsDialog } from '@/components/tasks/task-details-dialog';
 import { TaskDialog } from '@/components/tasks/task-dialog';
 import { Button } from '@/components/ui/button';
 import { CoolMode } from '@/components/ui/cool-mode';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import type { TaskFormData } from '@/types/kanban';
 
 type Column = {
@@ -55,6 +57,8 @@ export default function BoardPage() {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedTaskForDetails, setSelectedTaskForDetails] =
     useState<Task | null>(null);
+  const [columnWidth, setColumnWidth] = useState(350);
+  const [sectionHeight, setSectionHeight] = useState(600);
 
   useEffect(() => {
     async function loadBoardData() {
@@ -244,6 +248,34 @@ export default function BoardPage() {
         }
       >
         <div className="flex flex-row gap-2 justify-end items-center">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="column-width">Width</Label>
+            <Slider
+              id="column-width"
+              className="w-32"
+              min={150}
+              max={800}
+              step={10}
+              value={[columnWidth]}
+              onValueChange={([value]) => setColumnWidth(value ?? 350)}
+            />
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {columnWidth}px
+            </span>
+            <Label htmlFor="section-height">Height</Label>
+            <Slider
+              id="section-height"
+              className="w-32"
+              min={200}
+              max={1200}
+              step={10}
+              value={[sectionHeight]}
+              onValueChange={([value]) => setSectionHeight(value ?? 600)}
+            />
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {sectionHeight}px
+            </span>
+          </div>
           {pendingChanges.length > 0 && (
             <CoolMode>
               <Button
@@ -261,11 +293,20 @@ export default function BoardPage() {
         </div>
       </DashboardHeader>
       <section className="relative w-full overflow-hidden h-full">
-        <div className="grid grid-cols-3 gap-4 overflow-auto h-full">
+        <div
+          className="grid grid-cols-3 gap-4 overflow-auto h-full"
+          style={{
+            gridTemplateColumns: `repeat(3, minmax(0, ${columnWidth}px))`,
+          }}
+        >
           {columns.map((column, columnIndex) => (
             <div
               key={column.id}
               className="flex flex-col gap-4 p-4 bg-secondary/50 rounded-xl h-full"
+              style={{
+                width: columnWidth,
+                minHeight: sectionHeight,
+              }}
             >
               <h3 className="font-semibold text-lg">{column.title}</h3>
               <div className="flex flex-col gap-2">
